@@ -16,21 +16,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { LOAD_AASEE_DATA_FAILED, RENDER_AASEE_DATA } from '../actions/aasee';
+import {
+  LOAD_BICYCLEINFRASTRUCTURE_DATA_FAILED,
+  RENDER_BICYCLEINFRASTRUCTURE_DATA,
+} from '../actions/bicycleinfrastructure';
 
 /**
  * The Redux state should contain only plain JS objects, arrays, and primitives.
  * The root state value is usually an object. It's important that you should
  * not mutate the state object, but return a new object if the state changes.
  *
- * Here we initialize the state for the Aasee data
+ * Here we initialize the state for the Bicycle-Infrastructure data
  *
  */
 
-const initialState: ServiceState = {
-  data: {},
+export interface BicycleInfrastructureState extends ServiceState {
+  data: GeoJSON.FeatureCollection;
+}
+
+const initialState: BicycleInfrastructureState = {
+  data: {
+    type: 'FeatureCollection',
+    features: [],
+  },
   metadata: {
-    title: 'Wasserqualität Aasee',
+    title: 'Rad Infrastruktur Münster',
     updatedAt: undefined,
     online: false,
     error: undefined,
@@ -47,9 +57,12 @@ const initialState: ServiceState = {
  * we use a switch statement to read the action.type and change the state accordingly.
  */
 
-export default function aasee(state = initialState, action: any) {
+export default function bicycleinfrastructure(
+  state = initialState,
+  action: any
+) {
   switch (action.type) {
-    case RENDER_AASEE_DATA:
+    case RENDER_BICYCLEINFRASTRUCTURE_DATA:
       return {
         ...state,
         metadata: {
@@ -59,7 +72,7 @@ export default function aasee(state = initialState, action: any) {
         },
         data: action.aasee,
       };
-    case LOAD_AASEE_DATA_FAILED:
+    case LOAD_BICYCLEINFRASTRUCTURE_DATA_FAILED:
       return {
         ...state,
         metadata: {

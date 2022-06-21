@@ -23,6 +23,16 @@ import opensensemap from './opensensemap';
 import parkhaus from './parkhaus';
 import passanten from './passanten';
 import bicycle from './bicycle';
+import bicycleinfrastructure from './bicycleinfrastructure';
+
+/**
+ * The recommended pattern is to split reducer logic based on the slices of your state.
+ * Because this is common, Redux provides a utility called combineReducers
+ * to make it easy to define which slice reducers are responsible for each slice of state.
+ *
+ * In our input object we omit the key values that define the slices of the state but
+ * directly use the integrated function from the single reducer files (reducers/aasee.ts, ...)
+ */
 
 export default combineReducers({
   aasee,
@@ -31,4 +41,5 @@ export default combineReducers({
   parkhaus,
   passanten,
   bicycle,
+  bicycleinfrastructure,
 });

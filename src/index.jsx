@@ -43,6 +43,20 @@ const sagaMiddleware = createSagaMiddleware();
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
+/**
+ * Core Concepts: Store
+ * A Redux store contains the current state value. Stores are created using the
+ * createStore method, which takes the root reducer function and an optional 
+ * preloaded state value.
+ * 
+ * Stores have three main methods:
+    getState: returns the current stored state value
+    dispatch: starts a state update with the provided action object
+    subscribe: accepts a callback function that will be run every time an action is dispatched 
+              (get current store state 
+              -> exctract the data needed by this piece of UI 
+              -> updates the UI with this data)
+ */
 const store = createStore(
   mainReducer,
   composeEnhancers(applyMiddleware(sagaMiddleware))
@@ -60,6 +74,12 @@ store.dispatch(loadOsemData());
 store.dispatch(loadPedestrianData());
 store.dispatch(loadBicycleData());
 
+/**
+ * App Setup with Provider:
+ * Wrapping your root application component in <Provider>
+ * and passing it the store reference makes that store available
+ * to all connected components in the component tree.
+ */
 ReactDOM.render(
   <Provider store={store}>
     <App />

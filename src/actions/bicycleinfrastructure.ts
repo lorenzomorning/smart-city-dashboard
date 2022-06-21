@@ -17,27 +17,22 @@
  */
 
 /**
- * To change something in the state, you need to dispatch an action.
+ * To change something in the state, an action must be dispatched.
  * An action is a plain JavaScript object (notice how we don’t
  * introduce any magic?) that describes what happened.
- * In our case we add a type to the action, so that the reducer can
- * refer to this action.type
+ * There is always a type of action, so that the reducer can
+ * refer to this via action.type
  */
 
-export const LOAD_AASEE_DATA = 'LOAD_AASEE_DATA';
-export const LOAD_AASEE_TIMESERIES_DATA = 'LOAD_AASEE_TIMESERIES_DATA';
-export const LOAD_AASEE_DATA_FAILED = 'LOAD_AASEE_DATA_FAILED';
-export const RENDER_AASEE_DATA = 'RENDER_AASEE_DATA';
+export const LOAD_BICYCLEINFRASTRUCTURE_DATA =
+  'LOAD_BICYCLEINFRASTRUCTURE_DATA';
+export const LOAD_BICYCLEINFRASTRUCTURE_DATA_FAILED =
+  'LOAD_BICYCLEINFRASTRUCTURE_DATA_FAILED';
+export const RENDER_BICYCLEINFRASTRUCTURE_DATA =
+  'RENDER_BICYCLEINFRASTRUCTURE_DATA';
 
-export function loadAaseeData() {
+export function loadBicycleinfrastructureData() {
   return {
-    type: LOAD_AASEE_DATA,
-  };
-}
-
-export function loadAaseeTimeseriesData(from: Date) {
-  return {
-    type: LOAD_AASEE_TIMESERIES_DATA,
-    from,
+    type: LOAD_BICYCLEINFRASTRUCTURE_DATA,
   };
 }
