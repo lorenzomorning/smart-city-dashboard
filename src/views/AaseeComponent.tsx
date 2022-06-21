@@ -39,6 +39,7 @@ const AaseeComponent = () => {
   );
 
   const dispatch = useDispatch();
+
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     setLoading(false);
@@ -47,7 +48,6 @@ const AaseeComponent = () => {
   const [temperature, setTemperature] = useState(0);
   const [ph, setPh] = useState(0);
   const [oxygen, setOxygen] = useState(0);
-
   useEffect(() => {
     if (aaseeData.data.data) {
       setTemperature(aaseeData.data?.data?.water_temperature[0]?.value);

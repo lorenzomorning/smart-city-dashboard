@@ -33,9 +33,28 @@ const Wrapper = styled.div`
 `;
 
 function Map() {
+  // useSelector to get state from the global store
   const viewport = useSelector((state: RootStateOrAny) => state.map.viewport);
   const bbox = useSelector((state: RootStateOrAny) => state.map.bbox);
 
+  /**
+   * Hooks
+   * Handles local state and events in function components without
+   * writing classes for rendering props or inherit props from
+   * higher-order components.
+   *
+   *    useState:    returns [currentValue, updateFunction] and
+   *                 takes (initialState) as argument
+   *    useEffect:   The Effect Hook, useEffect, adds the ability to perform
+   *                 side effects from a function component. It serves the
+   *                 same purpose as componentDidMount, componentDidUpdate,
+   *                 and componentWillUnmount in React classes, but unified
+   *                 into a single API. It is triggered after every rendering
+   *                 of the component. It is often linked to a local state var
+   *                 They are often combined with a clean-up function after
+   *                 subscription
+   *
+   */
   const [map, setMap] = useState<Leaflet.Map>();
 
   useEffect(() => {

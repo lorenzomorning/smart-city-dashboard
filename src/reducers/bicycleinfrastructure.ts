@@ -49,8 +49,8 @@ const initialState: BicycleInfrastructureState = {
 
 /**
  * This is a reducer - a function that ties the state and the actions together,
- * it takes a current state value and an action object describing "what happened",
- * and returns a new state value.
+ * (comparable to an event handler) - it takes a current state value and an action
+ * object describing "what happened", and returns a new state value.
  * A reducer's function signature is: (state, action) => newState
  *
  * You can use any conditional logic you want in a reducer. In this example,
@@ -64,13 +64,13 @@ export default function bicycleinfrastructure(
   switch (action.type) {
     case RENDER_BICYCLEINFRASTRUCTURE_DATA:
       return {
-        ...state,
+        ...state, //... means copy
         metadata: {
           ...state.metadata,
-          updatedAt: new Date(),
+          updatedAt: new Date(), // this is mutated
           online: true,
         },
-        data: action.aasee,
+        data: action.bicycleinfrastructure, // this is mutated
       };
     case LOAD_BICYCLEINFRASTRUCTURE_DATA_FAILED:
       return {
