@@ -29,6 +29,7 @@ const OpenSenseMapComponent = lazy(
 const ParkhausComponent = lazy(() => import('../views/ParkhausComponent'));
 const PassantenComponent = lazy(() => import('../views/PassantenComponent'));
 const RadfahrerComponent = lazy(() => import('../views/RadfahrerComponent'));
+const LinkBoxComponent = lazy(() => import('../views/LinkBoxComponent'));
 
 const Container = styled.div`
   max-width: 1632px !important;
@@ -87,6 +88,17 @@ function Home() {
               <div className="tile is-parent">
                 <Suspense fallback={<Skeleton width="100%" height="100%" />}>
                   <AaseeComponent></AaseeComponent>
+                </Suspense>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="tile">
+          <div className="tile is-vertical">
+            <div className="tile">
+              <div className="tile is-4 is-parent is-horizontal">
+                <Suspense fallback={<Skeleton width="100%" height="100%" />}>
+                  <LinkBoxComponent></LinkBoxComponent>
                 </Suspense>
               </div>
             </div>
