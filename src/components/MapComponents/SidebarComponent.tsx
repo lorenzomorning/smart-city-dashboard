@@ -24,6 +24,7 @@ import { useMediaQuery } from 'beautiful-react-hooks';
 import { updateFeaturesVisible } from '../../actions/map';
 
 import {
+  BicycleInfrastructure,
   Humidity,
   CarParking,
   Bicycle,
@@ -176,6 +177,10 @@ const SidebarComponent = () => {
       >
         <Bicycle fill="#fff" />
         {!sidebarCollapsed && <p>Fahrräder</p>}
+      </IconLabel>
+      <IconLabel active={false}>
+        <BicycleInfrastructure fill="#fff" />
+        {!sidebarCollapsed && <p>Rad-Infrastruktur</p>}
       </IconLabel>
     </Sidebar>
   );

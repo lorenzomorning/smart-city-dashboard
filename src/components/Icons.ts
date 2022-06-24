@@ -31,7 +31,10 @@ import { ReactComponent as Dust } from '../resources/pictos/dust.svg';
 import { ReactComponent as ChevronLeft } from '../resources/icons/chevron-left.svg';
 import { ReactComponent as ChevronRight } from '../resources/icons/chevron-right.svg';
 
+import { ReactComponent as BicycleInfrastructure } from '../resources/pictos/bicycle-infrastructure.svg';
+
 export {
+  BicycleInfrastructure,
   Temperature,
   Humidity,
   Pressure,
