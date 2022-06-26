@@ -24,6 +24,7 @@ import { MapContainer, TileLayer, ZoomControl } from 'react-leaflet';
 import Leaflet from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import MarkerCluster from '../components/MapComponents/MarkerCluster';
+import NetworkLine from '../components/MapComponents/NetworkLine'; // import all single types?
 import { TIMEOUT } from '../components/Transition';
 
 const Wrapper = styled.div`
@@ -85,6 +86,7 @@ function Map() {
         />
 
         <MarkerCluster />
+        <NetworkLine />
       </MapContainer>
       <SidebarComponent></SidebarComponent>
     </Wrapper>

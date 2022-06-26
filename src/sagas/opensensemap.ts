@@ -29,6 +29,7 @@ import {
 const INTERVAL = 60;
 
 export function* fetchOsemDataPeriodically() {
+  console.log('fetchOsemDataPeriodically');
   while (true) {
     yield call(fetchOsemData);
     yield delay(INTERVAL * 1000);
@@ -36,6 +37,7 @@ export function* fetchOsemDataPeriodically() {
 }
 
 export function* fetchOsemData(): any {
+  console.log('fetchOsemData');
   try {
     const endpoint =
       'https://api.opensensemap.org/boxes/5f7ddc9f692773001c7da31c';

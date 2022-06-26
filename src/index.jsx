@@ -33,6 +33,7 @@ import { loadAaseeData } from './actions/aasee';
 import { loadOsemData } from './actions/opensensemap';
 import { loadPedestrianData } from './actions/passanten';
 import { loadBicycleData } from './actions/bicycle';
+import { loadBicycleInfrastructureData } from './actions/bicycleinfrastructure';
 
 import mainReducer from './reducers';
 import rootSaga from './sagas';
@@ -65,6 +66,7 @@ const store = createStore(
 sagaMiddleware.run(rootSaga);
 
 // we might want to run that somewhere else
+store.dispatch(loadBicycleInfrastructureData());
 store.dispatch(loadParkhausData());
 let from = new Date();
 from.setDate(from.getDate() - 1);
