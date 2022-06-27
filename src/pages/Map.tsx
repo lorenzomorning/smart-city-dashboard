@@ -37,6 +37,7 @@ function Map() {
   // useSelector to get state from the global store
   const viewport = useSelector((state: RootStateOrAny) => state.map.viewport);
   const bbox = useSelector((state: RootStateOrAny) => state.map.bbox);
+  const features = useSelector((state: RootStateOrAny) => state.map.features);
 
   /**
    * Hooks
@@ -84,9 +85,8 @@ function Map() {
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://geo.stadt-muenster.de/basiskarte/{z}/{x}/{y}.png"
         />
-
+        {features.bicycle_infrastructure && <NetworkLine />}
         <MarkerCluster />
-        <NetworkLine />
       </MapContainer>
       <SidebarComponent></SidebarComponent>
     </Wrapper>

@@ -68,16 +68,14 @@ const LinkBoxComponent = () => {
       <Container>
         <p className="is-size-5">Radfahr-Dashboard</p>
         <LinkContainer>
-          <LinkSemiBold className="is-size-3">
-            <a
-              href={'https://bikemaps.org/@51.9608486,7.6330090,14z'}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {' '}
-              Hier{' '}
-            </a>
-            <Logo src={logo} alt="Smart City Münster Logo"></Logo>
+          <LinkSemiBold
+            className="is-size-3"
+            href={'https://bikemaps.org/@51.9608486,7.6330090,14z'}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {' '}
+            Hier <Logo src={logo} alt="Smart City Münster Logo"></Logo>
           </LinkSemiBold>
         </LinkContainer>
         <p>finden Sie Münsters Dashboard zur Radinfrastruktur</p>

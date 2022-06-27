@@ -19,16 +19,27 @@
 import L from 'leaflet';
 import React, { useEffect, useState } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { Marker, Polyline, Popup } from 'react-leaflet';
+import {
+  Circle,
+  FeatureGroup,
+  Marker,
+  Polyline,
+  GeoJSON,
+  Popup,
+} from 'react-leaflet';
 import { useSelector, RootStateOrAny } from 'react-redux';
 
 const NetworkLine = () => {
-  const networkData: ServiceState = useSelector(
+  const networkData = useSelector(
     (state: RootStateOrAny) => state.bicycleinfrastructure.data // array of features []
   );
 
   // filter feature.properties.bicyle_infrastructure_type = cycling_network
-
+  console.log('networkData', networkData);
+  const networkLines = networkData.features.filter(
+    (e: any) => e.properties.bike_infrastructure_type === 'cycling_network'
+  );
+  console.log('networkLines', networkLines);
   /**
    * No local state needed for simple visualization
    * But if tile is plotted on main page, data is stored here
@@ -44,20 +55,28 @@ const NetworkLine = () => {
 
   let networkPathOptions = {
     color: '#f5d63b',
-    weight: 15,
+    weight: 10,
     opacity: 0.4,
   };
 
   return (
     <>
-      {networkData?.data?.features?.length > 0 && // conditional rendering
-        networkData.data.features.map((networkPart: any) => (
+      <GeoJSON
+        data={networkLines}
+        pathOptions={networkPathOptions}
+        key={'whatever'}
+      />
+      {/* <FeatureGroup 
+      pathOptions={networkPathOptions}
+      >
+      {networkLines?.length > 0 && // conditional rendering
+        networkLines.map((networkFeature: any, index:number) => (
           <Polyline
-            // no key available key={networkPart.properties.id}
-            positions={networkPart.geometry}
-            pathOptions={networkPathOptions}
+            key={index}
+            positions={networkFeature.geometry}  
           />
         ))}
+      </FeatureGroup>   */}
     </>
   );
 };

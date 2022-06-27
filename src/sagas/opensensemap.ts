@@ -29,7 +29,6 @@ import {
 const INTERVAL = 60;
 
 export function* fetchOsemDataPeriodically() {
-  console.log('fetchOsemDataPeriodically');
   while (true) {
     yield call(fetchOsemData);
     yield delay(INTERVAL * 1000);

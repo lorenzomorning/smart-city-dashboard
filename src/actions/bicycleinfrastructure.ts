@@ -32,7 +32,6 @@ export const RENDER_BICYCLEINFRASTRUCTURE_DATA =
   'RENDER_BICYCLEINFRASTRUCTURE_DATA';
 
 export function loadBicycleInfrastructureData() {
-  console.log('Actions: LoadBicycleInfrastructureData');
   return {
     type: LOAD_BICYCLEINFRASTRUCTURE_DATA,
   };

@@ -26,6 +26,7 @@ import {
   loadBicycleStationData,
   loadBicycleTimeseriesData,
 } from './bicycle';
+import { loadBicycleInfrastructureData } from './bicycleinfrastructure';
 
 export default function* rootSaga() {
   yield all([
@@ -40,5 +41,6 @@ export default function* rootSaga() {
     loadBicycleData(),
     loadBicycleTimeseriesData(),
     loadBicycleStationData(),
+    loadBicycleInfrastructureData(),
   ]);
 }

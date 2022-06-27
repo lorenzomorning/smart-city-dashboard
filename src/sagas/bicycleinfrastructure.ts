@@ -26,7 +26,6 @@ import {
 const INTERVAL = 60; // 1 minute
 
 export function* fetchBicycleInfrastructureDataPeriodically() {
-  console.log('FetchBicycleInfrastructureDataPeriodically');
   while (true) {
     yield call(fetchBicycleInfrastructureData);
     yield delay(INTERVAL * 1000);
@@ -36,20 +35,23 @@ export function* fetchBicycleInfrastructureDataPeriodically() {
 export function* fetchBicycleInfrastructureData(): any {
   console.log('FetchBicycleInfrastructureData');
   try {
-    const endpoint = `C:/Users/LorenzBeck/Git/smart-city-dashboard/data/bike_data.geojson`;
-    const response: Response = yield call(fetch, endpoint);
+    console.log('start trying');
+    const endpoint = `/bike_data.geojson`;
+    const response = yield call(fetch, endpoint);
+    console.log('response', response);
     const data = yield response.json();
+    console.log('data', data);
     yield put({
       type: RENDER_BICYCLEINFRASTRUCTURE_DATA,
       bicycleinfrastructure: data,
     }); // this is used in reducers/bicycleinfrastructure.ts
   } catch (error) {
+    console.log(error);
     yield put({ type: LOAD_BICYCLEINFRASTRUCTURE_DATA_FAILED, error });
   }
 }
 
 export function* loadBicycleInfrastructureData() {
-  console.log('SAGA: loadBicycleInfrastructureData');
   yield takeEvery(
     LOAD_BICYCLEINFRASTRUCTURE_DATA,
     fetchBicycleInfrastructureDataPeriodically

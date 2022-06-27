@@ -27,6 +27,7 @@ interface MapState {
     parking: boolean;
     pedestrians: boolean;
     bicycles: boolean;
+    bicycle_infrastructure: boolean;
   };
 }
 
@@ -42,20 +43,12 @@ const initialState: MapState = {
     [52.081687, 7.763585],
   ],
   features: {
-    /**
-     * include single
-     * bicycleinfrastructure: false
-     * OR
-     * network: false
-     * cycle_lane: false
-     * seperated_cycle_lane: false
-     * parking: false
-     */
     opensensemap: false,
     aasee: false,
     parking: false,
     pedestrians: false,
     bicycles: false,
+    bicycle_infrastructure: false,
   },
 };
 

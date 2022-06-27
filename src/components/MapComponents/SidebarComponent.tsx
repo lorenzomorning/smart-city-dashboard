@@ -178,7 +178,17 @@ const SidebarComponent = () => {
         <Bicycle fill="#fff" />
         {!sidebarCollapsed && <p>Fahrräder</p>}
       </IconLabel>
-      <IconLabel active={false}>
+      <IconLabel
+        active={features.bicycle_infrastructure}
+        onClick={() =>
+          dispatch(
+            updateFeaturesVisible({
+              ...features,
+              bicycle_infrastructure: !features.bicycle_infrastructure,
+            })
+          )
+        }
+      >
         <BicycleInfrastructure fill="#fff" />
         {!sidebarCollapsed && <p>Rad-Infrastruktur</p>}
       </IconLabel>
