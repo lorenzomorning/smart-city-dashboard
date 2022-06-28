@@ -33,14 +33,10 @@ export function* fetchBicycleInfrastructureDataPeriodically() {
 }
 
 export function* fetchBicycleInfrastructureData(): any {
-  console.log('FetchBicycleInfrastructureData');
   try {
-    console.log('start trying');
     const endpoint = `/bike_data.geojson`;
     const response = yield call(fetch, endpoint);
-    console.log('response', response);
     const data = yield response.json();
-    console.log('data', data);
     yield put({
       type: RENDER_BICYCLEINFRASTRUCTURE_DATA,
       bicycleinfrastructure: data,

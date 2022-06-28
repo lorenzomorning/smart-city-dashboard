@@ -24,7 +24,7 @@ import { MapContainer, TileLayer, ZoomControl } from 'react-leaflet';
 import Leaflet from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import MarkerCluster from '../components/MapComponents/MarkerCluster';
-import NetworkLine from '../components/MapComponents/NetworkLine'; // import all single types?
+import BicycleInfrastructure from '../components/MapComponents/BicycleInfrastructureTypes';
 import { TIMEOUT } from '../components/Transition';
 
 const Wrapper = styled.div`
@@ -38,6 +38,8 @@ function Map() {
   const viewport = useSelector((state: RootStateOrAny) => state.map.viewport);
   const bbox = useSelector((state: RootStateOrAny) => state.map.bbox);
   const features = useSelector((state: RootStateOrAny) => state.map.features);
+
+  console.log('BI', features.bicycleinfrastructure);
 
   /**
    * Hooks
@@ -85,7 +87,7 @@ function Map() {
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://geo.stadt-muenster.de/basiskarte/{z}/{x}/{y}.png"
         />
-        {features.bicycle_infrastructure && <NetworkLine />}
+        {features.bicycleinfrastructure && <BicycleInfrastructure />}
         <MarkerCluster />
       </MapContainer>
       <SidebarComponent></SidebarComponent>

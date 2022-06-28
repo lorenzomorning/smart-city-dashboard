@@ -27,7 +27,7 @@ interface MapState {
     parking: boolean;
     pedestrians: boolean;
     bicycles: boolean;
-    bicycle_infrastructure: boolean;
+    bicycleinfrastructure: boolean;
   };
 }
 
@@ -48,7 +48,7 @@ const initialState: MapState = {
     parking: false,
     pedestrians: false,
     bicycles: false,
-    bicycle_infrastructure: false,
+    bicycleinfrastructure: false,
   },
 };
 

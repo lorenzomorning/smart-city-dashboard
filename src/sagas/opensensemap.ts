@@ -36,7 +36,6 @@ export function* fetchOsemDataPeriodically() {
 }
 
 export function* fetchOsemData(): any {
-  console.log('fetchOsemData');
   try {
     const endpoint =
       'https://api.opensensemap.org/boxes/5f7ddc9f692773001c7da31c';

@@ -31,10 +31,24 @@ import { ReactComponent as Dust } from '../resources/pictos/dust.svg';
 import { ReactComponent as ChevronLeft } from '../resources/icons/chevron-left.svg';
 import { ReactComponent as ChevronRight } from '../resources/icons/chevron-right.svg';
 
-import { ReactComponent as BicycleInfrastructure } from '../resources/pictos/bicycle-infrastructure.svg';
+import { ReactComponent as BicycleInfrastructureIcon } from '../resources/pictos/bicycle-infrastructure.svg';
+import { ReactComponent as ChargingIcon } from '../resources/pictos/charging.svg';
+import { ReactComponent as ParkingIcon } from '../resources/pictos/parking.svg';
+import { ReactComponent as ShopIcon } from '../resources/pictos/shop.svg';
+import { ReactComponent as RepairIcon } from '../resources/pictos/repair.svg';
+import { ReactComponent as RentalIcon } from '../resources/pictos/rental.svg';
+import { ReactComponent as TubeIcon } from '../resources/pictos/tubevending.svg';
+import { ReactComponent as SignalIcon } from '../resources/pictos/trafficsignal.svg';
 
 export {
-  BicycleInfrastructure,
+  SignalIcon,
+  TubeIcon,
+  RentalIcon,
+  RepairIcon,
+  ShopIcon,
+  ParkingIcon,
+  ChargingIcon,
+  BicycleInfrastructureIcon,
   Temperature,
   Humidity,
   Pressure,

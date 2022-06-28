@@ -24,7 +24,7 @@ import { useMediaQuery } from 'beautiful-react-hooks';
 import { updateFeaturesVisible } from '../../actions/map';
 
 import {
-  BicycleInfrastructure,
+  BicycleInfrastructureIcon,
   Humidity,
   CarParking,
   Bicycle,
@@ -179,17 +179,17 @@ const SidebarComponent = () => {
         {!sidebarCollapsed && <p>Fahrräder</p>}
       </IconLabel>
       <IconLabel
-        active={features.bicycle_infrastructure}
+        active={features.bicycleinfrastructure}
         onClick={() =>
           dispatch(
             updateFeaturesVisible({
               ...features,
-              bicycle_infrastructure: !features.bicycle_infrastructure,
+              bicycleinfrastructure: !features.bicycleinfrastructure,
             })
           )
         }
       >
-        <BicycleInfrastructure fill="#fff" />
+        <BicycleInfrastructureIcon fill="#fff" />
         {!sidebarCollapsed && <p>Rad-Infrastruktur</p>}
       </IconLabel>
     </Sidebar>
