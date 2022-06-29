@@ -24,7 +24,7 @@ import { MapContainer, TileLayer, ZoomControl } from 'react-leaflet';
 import Leaflet from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import MarkerCluster from '../components/MapComponents/MarkerCluster';
-import BicycleInfrastructure from '../components/MapComponents/BicycleInfrastructureTypes';
+import BicycleInfrastructure from '../components/MapComponents/BicycleInfrastructureMarker';
 import { TIMEOUT } from '../components/Transition';
 
 const Wrapper = styled.div`

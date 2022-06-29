@@ -19,11 +19,9 @@
 import L from 'leaflet';
 import React, { useEffect, useState } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
+import { useSelector, RootStateOrAny } from 'react-redux';
 import { GeoJSON } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
-import { useSelector, RootStateOrAny } from 'react-redux';
-import { PopupContent } from './styles';
-import styled from 'styled-components';
 
 import {
   ChargingIcon,
@@ -33,148 +31,30 @@ import {
   RentalIcon,
   TubeIcon,
   SignalIcon,
+  WayfindingIcon,
+  TrainstationIcon,
 } from '../Icons';
-import BiMarkerIcon from './BiMarkerIcon';
-import BiMarker from './BiMarker';
-import { Marker } from 'react-leaflet';
 
-// Create customized markercluster group
-const DefaultMapMarker = styled.div<{
-  colorbg: string;
-  color: string;
-  size: string;
-  font: string;
-}>`
-  background-color: ${(props) => props.colorbg};
-  font-size: ${(props) => props.font}rem;
-  border-radius: 50%;
-  border: 1px solid white;
-  width: ${(props) => props.size}rem;
-  height: ${(props) => props.size}rem;
-  color: ${(props) => props.color};
-  box-shadow: var(--scms-box-shadow);
-  font-weight: var(--scms-semi-bold);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-const createClusterCustomIconGreen = function (cluster: any) {
-  let count = cluster.getChildCount();
-  if (count < 10) {
-    return L.divIcon({
-      html: renderToStaticMarkup(
-        <DefaultMapMarker
-          color="#E2F0D9"
-          colorbg="#385723"
-          size="1.5"
-          font="0.9"
-        >
-          {count}
-        </DefaultMapMarker>
-      ),
-      className: '',
-      iconSize: L.point(40, 40, true),
-    });
-  } else if (count >= 10 && count < 50) {
-    return L.divIcon({
-      html: renderToStaticMarkup(
-        <DefaultMapMarker color="#E2F0D9" colorbg="#385723" size="2" font="1.1">
-          {count}
-        </DefaultMapMarker>
-      ),
-      className: '',
-      iconSize: L.point(40, 40, true),
-    });
-  } else if (count >= 50) {
-    return L.divIcon({
-      html: renderToStaticMarkup(
-        <DefaultMapMarker
-          color="#E2F0D9"
-          colorbg="#385723"
-          size="2.5"
-          font="1.5"
-        >
-          {count}
-        </DefaultMapMarker>
-      ),
-      className: '',
-      iconSize: L.point(40, 40, true),
-    });
-  }
-};
-const createClusterCustomIconBlue = function (cluster: any) {
-  let count = cluster.getChildCount();
-  if (count < 10) {
-    return L.divIcon({
-      html: renderToStaticMarkup(
-        <DefaultMapMarker
-          color="#DEEBF7"
-          colorbg="#203864"
-          size="1.5"
-          font="0.9"
-        >
-          {count}
-        </DefaultMapMarker>
-      ),
-      className: '',
-      iconSize: L.point(40, 40, true),
-    });
-  } else if (count >= 10 && count < 50) {
-    return L.divIcon({
-      html: renderToStaticMarkup(
-        <DefaultMapMarker color="#DEEBF7" colorbg="#203864" size="2" font="1">
-          {count}
-        </DefaultMapMarker>
-      ),
-      className: '',
-      iconSize: L.point(40, 40, true),
-    });
-  } else if (count >= 50) {
-    return L.divIcon({
-      html: renderToStaticMarkup(
-        <DefaultMapMarker
-          color="#DEEBF7"
-          colorbg="#203864"
-          size="2.5"
-          font="1.25"
-        >
-          {count}
-        </DefaultMapMarker>
-      ),
-      className: '',
-      iconSize: L.point(40, 40, true),
-    });
-  }
-};
+import BiMarkerIcon from './BicycleInfrastructure/BiMarkerIcon';
+import BiMarker from './BicycleInfrastructure/BiMarker';
+import { createClusterCustomIconBlue } from './BicycleInfrastructure/ClusterMarkerIcons';
+import { createClusterCustomIconGreen } from './BicycleInfrastructure/ClusterMarkerIcons';
+import { addInfo } from './BicycleInfrastructure/PopupAddInfo';
 
 const BicycleInfrastructure = () => {
   const BicycleInfrastructureData = useSelector(
     (state: RootStateOrAny) => state.bicycleinfrastructure.data // array of features []
   );
 
-  // Function add info automatically creates a table for the popoup with the entries from feature.properties.attributes
-  function add_info(feature: any, layer: any) {
-    let bIType = feature.properties.bike_infrastructure_type;
-    if (feature.properties && feature.properties.attributes) {
-      let attributes = feature.properties.attributes;
-      var html_table =
-        "<p style='text-align:center; font-size:150%; font-weight:bold;'> " +
-        bIType +
-        " </p> <table class='table table-striped'> <tbody>";
-      // loop through the dictionary to feed the table with rows
-      attributes.forEach((attr: any) => {
-        for (let key in attr) {
-          let value = attr[key];
-          var tr =
-            ' <tr> </th> <td> ' + key + ': </td> <td> ' + value + '</td> </tr>';
-          html_table = html_table + tr;
-        }
-      });
-      // close the table
-      html_table = html_table + ' </tbody> </table>';
-      layer.bindPopup(html_table);
-    }
-  }
+  // Filter and style mixed paths polygons
+  const parkingPolygons = BicycleInfrastructureData.features.filter(
+    (feature: any) =>
+      feature.properties.bike_infrastructure_type === 'parking' &&
+      feature.geometry.type === 'Polygon'
+  );
+  let parkingPolygonsPathOptions = {
+    color: '#203864',
+  };
 
   // Filter and style mixed paths polygons
   const mixedPathPolygons = BicycleInfrastructureData.features.filter(
@@ -287,6 +167,7 @@ const BicycleInfrastructure = () => {
       ),
       iconSize: [32, 32],
       iconAnchor: [16, 16],
+      popupAnchor: [-3, -11],
     });
     return L.marker(latlng, { icon: chargingIcon });
   }
@@ -307,13 +188,16 @@ const BicycleInfrastructure = () => {
       ),
       iconSize: [32, 32],
       iconAnchor: [16, 16],
+      popupAnchor: [-3, -11],
     });
     return L.marker(latlng, { icon: shopIcon });
   }
 
   // Filter and style parking
   const parking = BicycleInfrastructureData.features.filter(
-    (feature: any) => feature.properties.bike_infrastructure_type === 'parking'
+    (feature: any) =>
+      feature.properties.bike_infrastructure_type === 'parking' &&
+      feature.geometry.type === 'Point'
   );
   function pointParking(geojsonPoint: any, latlng: any) {
     let parkingIcon = L.divIcon({
@@ -326,6 +210,7 @@ const BicycleInfrastructure = () => {
       ),
       iconSize: [32, 32],
       iconAnchor: [16, 16],
+      popupAnchor: [-3, -11],
     });
     return L.marker(latlng, { icon: parkingIcon });
   }
@@ -346,6 +231,7 @@ const BicycleInfrastructure = () => {
       ),
       iconSize: [32, 32],
       iconAnchor: [16, 16],
+      popupAnchor: [-3, -11],
     });
     return L.marker(latlng, { icon: repairIcon });
   }
@@ -366,6 +252,7 @@ const BicycleInfrastructure = () => {
       ),
       iconSize: [32, 32],
       iconAnchor: [16, 16],
+      popupAnchor: [-3, -11],
     });
     return L.marker(latlng, { icon: rentalIcon });
   }
@@ -386,6 +273,7 @@ const BicycleInfrastructure = () => {
       ),
       iconSize: [32, 32],
       iconAnchor: [16, 16],
+      popupAnchor: [-3, -11],
     });
     return L.marker(latlng, { icon: tubeIcon });
   }
@@ -399,9 +287,7 @@ const BicycleInfrastructure = () => {
     let signalIcon = L.divIcon({
       className: '',
       html: renderToStaticMarkup(
-        <BiMarker
-          icon={<SignalIcon stroke="#000000" fill="#000000" />}
-        ></BiMarker>
+        <BiMarker icon={<SignalIcon stroke="#000000" />}></BiMarker>
       ),
       iconSize: [32, 32],
       iconAnchor: [16, 16],
@@ -409,73 +295,110 @@ const BicycleInfrastructure = () => {
     return L.marker(latlng, { icon: signalIcon });
   }
 
-  // Wayfinding
+  // Filter and style wayfinding signs
+  const wayfindingSigns = BicycleInfrastructureData.features.filter(
+    (feature: any) =>
+      feature.properties.bike_infrastructure_type === 'wayfinding'
+  );
+  function pointWayfinding(geojsonPoint: any, latlng: any) {
+    let wayfindingIcon = L.divIcon({
+      className: '',
+      html: renderToStaticMarkup(
+        <BiMarker
+          icon={<WayfindingIcon stroke="#000000" fill="#ffc000" />}
+        ></BiMarker>
+      ),
+      iconSize: [32, 32],
+      iconAnchor: [16, 16],
+    });
+    return L.marker(latlng, { icon: wayfindingIcon });
+  }
 
-  // Train Station
+  // Filter and style train station
+  const trainStations = BicycleInfrastructureData.features.filter(
+    (feature: any) =>
+      feature.properties.bike_infrastructure_type === 'train_station'
+  );
+  function pointTrain(geojsonPoint: any, latlng: any) {
+    let trainIcon = L.divIcon({
+      className: '',
+      html: renderToStaticMarkup(
+        <BiMarkerIcon
+          color="#FF0000"
+          icon={<TrainstationIcon fill="#FFF3F3" />}
+        ></BiMarkerIcon>
+      ),
+      iconSize: [32, 32],
+      iconAnchor: [16, 16],
+      popupAnchor: [-3, -11],
+    });
+    return L.marker(latlng, { icon: trainIcon });
+  }
 
   return (
     <>
-      <GeoJSON
-        data={mixedPathPolygons}
-        style={mixedPathPolygonsPathOptions}
-        key={'mixedPathPolygons'}
-        onEachFeature={add_info}
-      />
-
       <GeoJSON
         data={networkLines}
         style={networkPathOptions}
         key={'networkLines'}
       />
-
+      <GeoJSON
+        data={mixedPathPolygons}
+        style={mixedPathPolygonsPathOptions}
+        key={'mixedPathPolygons'}
+        onEachFeature={addInfo}
+      />
+      <GeoJSON
+        data={parkingPolygons}
+        style={parkingPolygonsPathOptions}
+        key={'parkingPolygons'}
+        onEachFeature={addInfo}
+      />
       <GeoJSON
         data={trafficCalming}
         style={trafficCalmingPathOptions}
         key={'trafficCalming'}
-        onEachFeature={add_info}
+        onEachFeature={addInfo}
       />
-
       <GeoJSON
         data={oneWayExceptions}
         style={oneWayExceptionsPathOptions}
         key={'onewayExceptions'}
       />
-
       <GeoJSON
         data={mixedPathLines}
         style={mixedPathLinesPathOptions}
         key={'mixedPathLines'}
-        onEachFeature={add_info}
+        onEachFeature={addInfo}
       />
-
       <GeoJSON
         data={cycleLanes}
         style={cycleLanesPathOptions}
         key={'cycleLanes'}
-        onEachFeature={add_info}
-      ></GeoJSON>
-
+        onEachFeature={addInfo}
+      />
       <GeoJSON
         data={sepCycleLanes}
         style={sepCycleLanesPathOptions}
         key={'sepCycleLanes'}
-        onEachFeature={add_info}
-      ></GeoJSON>
-
+        onEachFeature={addInfo}
+      />
       <GeoJSON
         data={cyclingStreets}
         style={cyclingstreetPathOptions}
         key={'cyclingStreets'}
-        onEachFeature={add_info}
-      ></GeoJSON>
-
+        onEachFeature={addInfo}
+      />
       <GeoJSON
-        data={chargingStations}
-        pointToLayer={pointCharging}
-        key={'chargingStations'}
-        onEachFeature={add_info}
-      ></GeoJSON>
-
+        data={trafficSignals}
+        pointToLayer={pointSignal}
+        key={'trafficSignals'}
+      />
+      <GeoJSON
+        data={wayfindingSigns}
+        pointToLayer={pointWayfinding}
+        key={'wayfindingSigns'}
+      />
       <MarkerClusterGroup
         spiderfyDistanceMultiplier={3}
         iconCreateFunction={createClusterCustomIconGreen}
@@ -490,10 +413,9 @@ const BicycleInfrastructure = () => {
           data={bicycleShops}
           pointToLayer={pointShop}
           key={'bicycleShops'}
-          onEachFeature={add_info}
+          onEachFeature={addInfo}
         ></GeoJSON>
       </MarkerClusterGroup>
-
       <MarkerClusterGroup
         spiderfyDistanceMultiplier={3}
         iconCreateFunction={createClusterCustomIconBlue}
@@ -508,36 +430,39 @@ const BicycleInfrastructure = () => {
           data={parking}
           pointToLayer={pointParking}
           key={'parking'}
-          onEachFeature={add_info}
+          onEachFeature={addInfo}
         ></GeoJSON>
       </MarkerClusterGroup>
-
+      <GeoJSON
+        data={chargingStations}
+        pointToLayer={pointCharging}
+        key={'chargingStations'}
+        onEachFeature={addInfo}
+      />
       <GeoJSON
         data={repairStations}
         pointToLayer={pointRepair}
         key={'repairStations'}
-        onEachFeature={add_info}
-      ></GeoJSON>
-
+        onEachFeature={addInfo}
+      />
       <GeoJSON
         data={rentals}
         pointToLayer={pointRental}
         key={'rentals'}
-        onEachFeature={add_info}
-      ></GeoJSON>
-
+        onEachFeature={addInfo}
+      />
       <GeoJSON
         data={tubeVendings}
         pointToLayer={pointTube}
         key={'tubeVendings'}
-        onEachFeature={add_info}
-      ></GeoJSON>
-
+        onEachFeature={addInfo}
+      />
       <GeoJSON
-        data={trafficSignals}
-        pointToLayer={pointSignal}
-        key={'trafficSignalas'}
-      ></GeoJSON>
+        data={trainStations}
+        pointToLayer={pointTrain}
+        key={'trainStations'}
+        onEachFeature={addInfo}
+      />
     </>
   );
 };

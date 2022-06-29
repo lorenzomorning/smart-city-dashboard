@@ -20,7 +20,14 @@ import styled from 'styled-components';
 import React from 'react';
 
 interface BiMarkerProps {
-  color: '#385723' | '#203864' | 'blue' | 'green' | 'orange' | 'red'; // 'darkgreen', 'darkblue'
+  color:
+    | '#385723'
+    | '#203864'
+    | '#FF0000'
+    | 'blue'
+    | 'green'
+    | 'orange'
+    | 'red'; // 'darkgreen', 'darkblue', 'red'
   icon: JSX.Element;
 }
 

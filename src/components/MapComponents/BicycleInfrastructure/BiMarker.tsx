@@ -28,7 +28,6 @@ const BaseMapMarker = styled.div`
   border-bottom-right-radius: 0.25rem;
   width: 1.5rem;
   height: 1.5rem;
-  box-shadow: var(--scms-box-shadow);
   font-weight: var(--scms-semi-bold);
   display: flex;
   -moz-border-radius: 50px;

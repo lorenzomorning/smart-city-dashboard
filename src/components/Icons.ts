@@ -39,8 +39,12 @@ import { ReactComponent as RepairIcon } from '../resources/pictos/repair.svg';
 import { ReactComponent as RentalIcon } from '../resources/pictos/rental.svg';
 import { ReactComponent as TubeIcon } from '../resources/pictos/tubevending.svg';
 import { ReactComponent as SignalIcon } from '../resources/pictos/trafficsignal.svg';
+import { ReactComponent as WayfindingIcon } from '../resources/pictos/wayfinding.svg';
+import { ReactComponent as TrainstationIcon } from '../resources/pictos/trainstation.svg';
 
 export {
+  TrainstationIcon,
+  WayfindingIcon,
   SignalIcon,
   TubeIcon,
   RentalIcon,
