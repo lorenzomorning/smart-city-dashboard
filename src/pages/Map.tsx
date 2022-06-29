@@ -69,6 +69,7 @@ function Map() {
     }
   }, [map]);
 
+  console.log('map', map);
   return (
     <Wrapper>
       <MapContainer

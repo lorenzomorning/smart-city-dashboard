@@ -20,7 +20,6 @@ import React, { useEffect, useState } from 'react';
 import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { useMediaQuery } from 'beautiful-react-hooks';
-
 import { updateFeaturesVisible } from '../../actions/map';
 
 import {
