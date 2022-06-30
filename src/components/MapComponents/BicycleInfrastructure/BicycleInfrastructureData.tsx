@@ -22,9 +22,9 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { useSelector, RootStateOrAny, useDispatch } from 'react-redux';
 import { FeatureGroup, GeoJSON } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
-import LayerControl, { GroupedLayer } from './LayerControl/LayerControl';
+import LayerControl, { GroupedLayer } from '../LayerControl/LayerControl';
 
-import { updateParkingOverlay } from '../../actions/parkingoverlay';
+import { updateParkingOverlay } from '../../../actions/parkingoverlay';
 
 import {
   ChargingIcon,
@@ -36,13 +36,13 @@ import {
   SignalIcon,
   WayfindingIcon,
   TrainstationIcon,
-} from '../Icons';
+} from '../../Icons';
 
-import BiMarkerIcon from './BicycleInfrastructure/BiMarkerIcon';
-import BiMarker from './BicycleInfrastructure/BiMarker';
-import { createClusterCustomIconBlue } from './BicycleInfrastructure/ClusterMarkerIcons';
-import { createClusterCustomIconGreen } from './BicycleInfrastructure/ClusterMarkerIcons';
-import { addInfo } from './BicycleInfrastructure/PopupAddInfo';
+import BiMarkerIcon from './BiMarkerIcon';
+import BiMarker from './BiMarker';
+import { createClusterCustomIconBlue } from './ClusterMarkerIcons';
+import { createClusterCustomIconGreen } from './ClusterMarkerIcons';
+import { addInfo } from './PopupAddInfo';
 
 const BicycleInfrastructure = () => {
   const dispatch = useDispatch();

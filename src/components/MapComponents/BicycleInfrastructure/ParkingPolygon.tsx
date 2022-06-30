@@ -16,9 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import L from 'leaflet';
-import React, { useEffect, useState } from 'react';
-import { renderToStaticMarkup } from 'react-dom/server';
+//import L from 'leaflet';
+import React, { useState } from 'react';
 import { useSelector, RootStateOrAny } from 'react-redux';
 import { FeatureGroup, GeoJSON, useMap, useMapEvent } from 'react-leaflet';
 

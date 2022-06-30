@@ -20,20 +20,14 @@ import React, { useEffect, useState } from 'react';
 import { RootStateOrAny, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import SidebarComponent from '../components/MapComponents/SidebarComponent';
-import {
-  MapContainer,
-  TileLayer,
-  ZoomControl,
-  useMap,
-  useMapEvent,
-} from 'react-leaflet';
+import { MapContainer, TileLayer, ZoomControl } from 'react-leaflet';
 import Leaflet from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { TIMEOUT } from '../components/Transition';
 
 // Import Leaflet data
 import MarkerCluster from '../components/MapComponents/MarkerCluster';
-import BicycleInfrastructure from '../components/MapComponents/BicycleInfrastructureMarker';
+import BicycleInfrastructure from '../components/MapComponents/BicycleInfrastructure/BicycleInfrastructureData';
 import ParkingPolygons from '../components/MapComponents/BicycleInfrastructure/ParkingPolygon';
 
 const Wrapper = styled.div`
