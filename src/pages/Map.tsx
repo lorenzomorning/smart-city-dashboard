@@ -20,12 +20,21 @@ import React, { useEffect, useState } from 'react';
 import { RootStateOrAny, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import SidebarComponent from '../components/MapComponents/SidebarComponent';
-import { MapContainer, TileLayer, ZoomControl } from 'react-leaflet';
+import {
+  MapContainer,
+  TileLayer,
+  ZoomControl,
+  useMap,
+  useMapEvent,
+} from 'react-leaflet';
 import Leaflet from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { TIMEOUT } from '../components/Transition';
+
+// Import Leaflet data
 import MarkerCluster from '../components/MapComponents/MarkerCluster';
 import BicycleInfrastructure from '../components/MapComponents/BicycleInfrastructureMarker';
-import { TIMEOUT } from '../components/Transition';
+import ParkingPolygons from '../components/MapComponents/BicycleInfrastructure/ParkingPolygon';
 
 const Wrapper = styled.div`
   position: relative;
@@ -38,8 +47,6 @@ function Map() {
   const viewport = useSelector((state: RootStateOrAny) => state.map.viewport);
   const bbox = useSelector((state: RootStateOrAny) => state.map.bbox);
   const features = useSelector((state: RootStateOrAny) => state.map.features);
-
-  console.log('BI', features.bicycleinfrastructure);
 
   /**
    * Hooks
@@ -59,6 +66,7 @@ function Map() {
    *                 subscription
    *
    */
+
   const [map, setMap] = useState<Leaflet.Map>();
 
   useEffect(() => {
@@ -69,7 +77,6 @@ function Map() {
     }
   }, [map]);
 
-  console.log('map', map);
   return (
     <Wrapper>
       <MapContainer
@@ -88,6 +95,7 @@ function Map() {
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://geo.stadt-muenster.de/basiskarte/{z}/{x}/{y}.png"
         />
+        {features.bicycleinfrastructure && <ParkingPolygons />}
         {features.bicycleinfrastructure && <BicycleInfrastructure />}
         <MarkerCluster />
       </MapContainer>

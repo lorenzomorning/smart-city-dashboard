@@ -36,6 +36,7 @@ const initialState: MapState = {
     latitude: 51.9577,
     longitude: 7.6376,
     zoom: 12,
+    currentZoom: 12,
     maxZoom: 17,
   },
   bbox: [

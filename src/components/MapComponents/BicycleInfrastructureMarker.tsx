@@ -17,12 +17,14 @@
  */
 
 import L from 'leaflet';
-import React, { useEffect, useState, useRef } from 'react';
+//import React, { useEffect, useState } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { useSelector, RootStateOrAny } from 'react-redux';
+import { useSelector, RootStateOrAny, useDispatch } from 'react-redux';
 import { FeatureGroup, GeoJSON } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
 import LayerControl, { GroupedLayer } from './LayerControl/LayerControl';
+
+import { updateParkingOverlay } from '../../actions/parkingoverlay';
 
 import {
   ChargingIcon,
@@ -43,19 +45,11 @@ import { createClusterCustomIconGreen } from './BicycleInfrastructure/ClusterMar
 import { addInfo } from './BicycleInfrastructure/PopupAddInfo';
 
 const BicycleInfrastructure = () => {
+  const dispatch = useDispatch();
+
   const BicycleInfrastructureData = useSelector(
     (state: RootStateOrAny) => state.bicycleinfrastructure.data // array of features []
   );
-
-  // Filter, style and ref mixed paths polygons
-  const parkingPolygons = BicycleInfrastructureData.features.filter(
-    (feature: any) =>
-      feature.properties.bike_infrastructure_type === 'parking' &&
-      feature.geometry.type === 'Polygon'
-  );
-  let parkingPolygonsPathOptions = {
-    color: '#203864',
-  };
 
   // Filter and style mixed paths polygons
   const mixedPathPolygons = BicycleInfrastructureData.features.filter(
@@ -338,7 +332,6 @@ const BicycleInfrastructure = () => {
 
   return (
     <>
-      '
       <LayerControl position="bottomright">
         <GroupedLayer checked name="Radwege-Netz" group="Radwege-Netz">
           {/* The FeatureGroup wrapping is necessary, as only then all layers are cleared
@@ -357,16 +350,6 @@ const BicycleInfrastructure = () => {
               data={mixedPathPolygons}
               style={mixedPathPolygonsPathOptions}
               key={'mixedPathPolygons'}
-              onEachFeature={addInfo}
-            />
-          </FeatureGroup>
-        </GroupedLayer>
-        <GroupedLayer name="Parkflächen" group="Parken + Laden">
-          <FeatureGroup>
-            <GeoJSON
-              data={parkingPolygons}
-              style={parkingPolygonsPathOptions}
-              key={'parkingPolygons'}
               onEachFeature={addInfo}
             />
           </FeatureGroup>
@@ -461,7 +444,6 @@ const BicycleInfrastructure = () => {
           group="Rad-Service"
           icon={<ShopIcon />}
         >
-          '
           <MarkerClusterGroup
             spiderfyDistanceMultiplier={3}
             iconCreateFunction={createClusterCustomIconGreen}
@@ -494,6 +476,14 @@ const BicycleInfrastructure = () => {
               weight: 2,
               opacity: 0.8,
               fillOpacity: 0.3,
+            }}
+            eventHandlers={{
+              add: (e: any) => {
+                dispatch(updateParkingOverlay(true));
+              },
+              remove: (e: any) => {
+                dispatch(updateParkingOverlay(false));
+              },
             }}
           >
             <GeoJSON

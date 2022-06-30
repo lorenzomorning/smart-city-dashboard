@@ -54,7 +54,6 @@ interface ILayerObj {
 const LayerControl = ({ position, children }: IProps) => {
   const [collapsed, setCollapsed] = useState(true);
   const [layers, setLayers] = useState<ILayerObj[]>([]);
-  //console.log("layers", layers)
   const positionClass =
     (position && POSITION_CLASSES[position]) || POSITION_CLASSES.topright;
 
@@ -162,7 +161,7 @@ const LayerControl = ({ position, children }: IProps) => {
                           label={
                             <IconLabel>
                               {layerObj.icon}
-                              {console.log('icon', layerObj.icon)}
+                              {/* {console.log('icon', layerObj.icon)} */}
                               {layerObj.name}
                             </IconLabel>
                           }
