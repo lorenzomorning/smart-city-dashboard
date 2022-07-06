@@ -24,7 +24,7 @@ import { FeatureGroup, GeoJSON } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
 import LayerControl, { GroupedLayer } from '../LayerControl/LayerControl';
 
-import { updateParkingOverlay } from '../../../actions/parkingoverlay';
+import { updateParkingOverlay } from '../../../actions/globalsettings';
 
 import {
   ChargingIcon,

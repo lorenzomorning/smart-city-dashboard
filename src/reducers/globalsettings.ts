@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { UPDATE_PARKING_OVERLAY } from '../actions/parkingoverlay';
+import { UPDATE_PARKING_OVERLAY } from '../actions/globalsettings';
 
 /**
  * The Redux state should contain only plain JS objects, arrays, and primitives.
@@ -27,19 +27,19 @@ import { UPDATE_PARKING_OVERLAY } from '../actions/parkingoverlay';
  *
  */
 
-interface ParkingOverlayState {
-  overlay: boolean;
+interface GlobalSettingsState {
+  parkingOverlay: boolean;
 }
 
-const initialState: ParkingOverlayState = {
-  overlay: true,
+const initialState: GlobalSettingsState = {
+  parkingOverlay: true,
 };
 
-export default function parkingoverlay(state = initialState, action: any) {
+export default function globalsettings(state = initialState, action: any) {
   switch (action.type) {
     case UPDATE_PARKING_OVERLAY:
       return {
-        overlay: action.overlay,
+        parkingOverlay: action.parkingOverlay,
       };
     default:
       return state;

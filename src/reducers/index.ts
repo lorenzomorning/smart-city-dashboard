@@ -24,7 +24,7 @@ import parkhaus from './parkhaus';
 import passanten from './passanten';
 import bicycle from './bicycle';
 import bicycleinfrastructure from './bicycleinfrastructure';
-import parkingoverlay from './parkingoverlay';
+import globalsettings from './globalsettings';
 
 /**
  * The recommended pattern is to split reducer logic based on the slices of your state.
@@ -43,5 +43,5 @@ export default combineReducers({
   passanten,
   bicycle,
   bicycleinfrastructure,
-  parkingoverlay,
+  globalsettings,
 });

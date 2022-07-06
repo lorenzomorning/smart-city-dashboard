@@ -25,6 +25,10 @@ const ParkingPolygons = () => {
   const BicycleInfrastructureData = useSelector(
     (state: RootStateOrAny) => state.bicycleinfrastructure.data // array of features []
   );
+  // Retrieve whether parking points are shown or not
+  const globalSettings = useSelector(
+    (state: RootStateOrAny) => state.globalsettings
+  );
 
   // Filter, style and ref parking polygons
   const parkingPolygons = BicycleInfrastructureData.features.filter(
@@ -45,15 +49,10 @@ const ParkingPolygons = () => {
   });
   console.log('zoom', zoom);
 
-  // Retrieve whether parking points are shown or not
-  const parkingOverlay = useSelector(
-    (state: RootStateOrAny) => state.parkingoverlay
-  );
-
   // return Feature Group only when zoom is higher than 16 and if parkingOverlay === true
   return (
     <>
-      {zoom >= 16 && parkingOverlay.overlay && (
+      {zoom >= 16 && globalSettings.parkingOverlay && (
         <FeatureGroup>
           <GeoJSON
             data={parkingPolygons}

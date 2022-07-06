@@ -24,11 +24,11 @@
  * refer to this action.type
  */
 
-export const UPDATE_PARKING_OVERLAY = 'CHANGE_PARKING_OVERLAY';
+export const UPDATE_PARKING_OVERLAY = 'UPDATE_PARKING_OVERLAY';
 
-export function updateParkingOverlay(overlay: any) {
+export function updateParkingOverlay(parkingOverlay: any) {
   return {
     type: UPDATE_PARKING_OVERLAY,
-    overlay,
+    parkingOverlay,
   };
 }
