@@ -21,6 +21,7 @@ import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { useMediaQuery } from 'beautiful-react-hooks';
 import { updateFeaturesVisible } from '../../actions/map';
+import { updateExploreMode } from '../../actions/globalsettings';
 
 import {
   BicycleInfrastructureIcon,
@@ -77,8 +78,61 @@ const Sidebar = styled.div<ISidebarProps>`
   }
 `;
 
+interface CheckBoxWrapperProps {
+  active?: boolean;
+}
+const CheckBoxWrapper = styled.div<CheckBoxWrapperProps>`
+  position: relative;
+  display: flex;
+  felx-direction: row-reverse;
+
+  background-color: ${(props) =>
+    props.active ? 'rgba(255, 255, 255, 0.2)' : ''};
+`;
+
+const CheckBoxLabel = styled.label`
+  width: 42px;
+  height: 26px;
+  border-radius: 15px;
+  background: #bebebe;
+  cursor: pointer;
+  &::after {
+    content: '';
+    display: block;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    margin: 3px;
+    background: #ffffff;
+    box-shadow: 1px 3px 3px 1px rgba(0, 0, 0, 0.2);
+    transition: 0.2s;
+  }
+`;
+const CheckBox = styled.input`
+  opacity: 0;
+  z-index: 1;
+  border-radius: 15px;
+  width: 42px;
+  height: 26px;
+  &:checked + ${CheckBoxLabel} {
+    background: #4fbe79;
+    &::after {
+      content: '';
+      display: block;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      margin-left: 21px;
+      transition: 0.2s;
+    }
+  }
+`;
+
 const SidebarComponent = () => {
   const features = useSelector((state: RootStateOrAny) => state.map.features);
+  const exploreMode = useSelector(
+    (state: RootStateOrAny) => state.globalsettings.exploreMode
+  );
   const dispatch = useDispatch();
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -191,6 +245,18 @@ const SidebarComponent = () => {
         <BicycleInfrastructureIcon fill="#fff" />
         {!sidebarCollapsed && <p>Rad-Infrastruktur</p>}
       </IconLabel>
+      {features.bicycleinfrastructure && !sidebarCollapsed && (
+        <CheckBoxWrapper active={features.bicycleinfrastructure}>
+          <CheckBox
+            type="checkbox"
+            id="checkbox"
+            defaultChecked={exploreMode}
+            onChange={() => dispatch(updateExploreMode(!exploreMode))}
+          />
+          <CheckBoxLabel htmlFor="checkbox" />
+          <span>Erkundungsmodus</span>
+        </CheckBoxWrapper>
+      )}
     </Sidebar>
   );
 };

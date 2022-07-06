@@ -17,6 +17,7 @@
  */
 
 import { UPDATE_PARKING_OVERLAY } from '../actions/globalsettings';
+import { UPDATE_EXPLORE_MODE } from '../actions/globalsettings';
 
 /**
  * The Redux state should contain only plain JS objects, arrays, and primitives.
@@ -29,17 +30,25 @@ import { UPDATE_PARKING_OVERLAY } from '../actions/globalsettings';
 
 interface GlobalSettingsState {
   parkingOverlay: boolean;
+  exploreMode: boolean;
 }
 
 const initialState: GlobalSettingsState = {
   parkingOverlay: true,
+  exploreMode: false,
 };
 
 export default function globalsettings(state = initialState, action: any) {
   switch (action.type) {
     case UPDATE_PARKING_OVERLAY:
       return {
+        ...state,
         parkingOverlay: action.parkingOverlay,
+      };
+    case UPDATE_EXPLORE_MODE:
+      return {
+        ...state,
+        exploreMode: action.exploreMode,
       };
     default:
       return state;

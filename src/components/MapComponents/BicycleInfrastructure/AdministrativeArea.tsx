@@ -19,49 +19,51 @@
 //import L from 'leaflet';
 import React, { useState } from 'react';
 import { useSelector, RootStateOrAny } from 'react-redux';
-import { FeatureGroup, GeoJSON, useMap, useMapEvent } from 'react-leaflet';
+import {
+  FeatureGroup,
+  GeoJSON,
+  Pane,
+  useMap,
+  useMapEvent,
+} from 'react-leaflet';
 
-const ParkingPolygons = () => {
+const AdministrativeAreas = () => {
   const BicycleInfrastructureData = useSelector(
     (state: RootStateOrAny) => state.bicycleinfrastructure.data // array of features []
   );
-  // Retrieve whether parking points are shown or not
-  const parkingOverlay = useSelector(
-    (state: RootStateOrAny) => state.globalsettings.parkingOverlay
+  // Retrieve whether exploreMode is activated
+  const exploreMode = useSelector(
+    (state: RootStateOrAny) => state.globalsettings.exploreMode
   );
+  console.log('exploreMode', exploreMode);
   // Filter, style and ref parking polygons
-  const parkingPolygons = BicycleInfrastructureData.features.filter(
+  const administrativeAreas = BicycleInfrastructureData.features.filter(
     (feature: any) =>
-      feature.properties.bike_infrastructure_type === 'parking' &&
-      feature.geometry.type === 'Polygon'
+      feature.properties.bike_infrastructure_type === 'admin_area'
   );
-  let parkingPolygonsPathOptions = {
-    color: '#203864',
+  let adminAreaOptions = {
+    color: '#969696',
+    weight: 2,
+    opacity: 0.8,
+    fillOpacity: 0.5,
   };
-
-  // Define zoom related visualization
-  let map = useMap(); // get map as this component is a child of the <MapContainer>
-  const [zoom, setZoom] = useState(map.getZoom());
-
-  useMapEvent('zoomend', (e) => {
-    setZoom(e.target._zoom);
-  });
-  console.log('zoom', zoom);
 
   // return Feature Group only when zoom is higher than 16 and if parkingOverlay === true
   return (
     <>
-      {zoom >= 16 && parkingOverlay && (
+      {exploreMode && (
         <FeatureGroup>
-          <GeoJSON
-            data={parkingPolygons}
-            style={parkingPolygonsPathOptions}
-            key={'parkingPolygons'}
-          />
+          <Pane name="administrativeAreas" style={{ zIndex: 600 }}>
+            <GeoJSON
+              data={administrativeAreas}
+              style={adminAreaOptions}
+              key={'administrativeAreas'}
+            />
+          </Pane>
         </FeatureGroup>
       )}
     </>
   );
 };
 
-export default ParkingPolygons;
+export default AdministrativeAreas;

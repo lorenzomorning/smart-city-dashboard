@@ -18,6 +18,7 @@
 
 import React from 'react';
 import L from 'leaflet';
+import { Pane } from 'react-leaflet';
 import 'leaflet.markercluster/dist/leaflet.markercluster';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
@@ -59,16 +60,18 @@ const MarkerCluster = () => {
   const features = useSelector((state: RootStateOrAny) => state.map.features);
 
   return (
-    <MarkerClusterGroup
-      spiderfyDistanceMultiplier={3}
-      iconCreateFunction={createClusterCustomIcon}
-    >
-      {features.opensensemap && <WeatherMarker></WeatherMarker>}
-      {features.aasee && <AaseeMarker></AaseeMarker>}
-      {features.bicycle && <BicycleMarker></BicycleMarker>}
-      {features.parking && <ParkingMarker></ParkingMarker>}
-      {features.pedestrians && <PedestrianMarker></PedestrianMarker>}
-    </MarkerClusterGroup>
+    <Pane name="markerClusterGroup" style={{ zIndex: 550 }}>
+      <MarkerClusterGroup
+        spiderfyDistanceMultiplier={3}
+        iconCreateFunction={createClusterCustomIcon}
+      >
+        {features.opensensemap && <WeatherMarker></WeatherMarker>}
+        {features.aasee && <AaseeMarker></AaseeMarker>}
+        {features.bicycle && <BicycleMarker></BicycleMarker>}
+        {features.parking && <ParkingMarker></ParkingMarker>}
+        {features.pedestrians && <PedestrianMarker></PedestrianMarker>}
+      </MarkerClusterGroup>
+    </Pane>
   );
 };
 

@@ -20,7 +20,7 @@ import L from 'leaflet';
 //import React, { useEffect, useState } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { useSelector, RootStateOrAny, useDispatch } from 'react-redux';
-import { FeatureGroup, GeoJSON } from 'react-leaflet';
+import { FeatureGroup, GeoJSON, Pane } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
 import LayerControl, { GroupedLayer } from '../LayerControl/LayerControl';
 
@@ -333,166 +333,121 @@ const BicycleInfrastructure = () => {
   return (
     <>
       <LayerControl position="bottomright">
-        <GroupedLayer checked name="Radwege-Netz" group="Radwege-Netz">
-          {/* The FeatureGroup wrapping is necessary, as only then all layers are cleared
-              when the side bar component for the bicycle infrastructure is unselected */}
-          <FeatureGroup>
-            <GeoJSON
-              data={networkLines}
-              style={networkPathOptions}
-              key={'networkLines'}
-            />
-          </FeatureGroup>
-        </GroupedLayer>
-        <GroupedLayer name="Mix-Fläche" group="Radverkehrs-Integration">
-          <FeatureGroup>
-            <GeoJSON
-              data={mixedPathPolygons}
-              style={mixedPathPolygonsPathOptions}
-              key={'mixedPathPolygons'}
-              onEachFeature={addInfo}
-            />
-          </FeatureGroup>
-        </GroupedLayer>
-        <GroupedLayer name="Verkehrsberuhigt" group="Radverkehrs-Integration">
-          <FeatureGroup>
-            <GeoJSON
-              data={trafficCalming}
-              style={trafficCalmingPathOptions}
-              key={'trafficCalming'}
-              onEachFeature={addInfo}
-            />
-          </FeatureGroup>
-        </GroupedLayer>
-        <GroupedLayer
-          name="Einbahnstraßen-Ausnahme"
-          group="Radverkehrs-Integration"
-        >
-          <FeatureGroup>
-            <GeoJSON
-              data={oneWayExceptions}
-              style={oneWayExceptionsPathOptions}
-              key={'onewayExceptions'}
-            />
-          </FeatureGroup>
-        </GroupedLayer>
-        <GroupedLayer name="Mix-Weg" group="Radverkehrs-Integration">
-          <FeatureGroup>
-            <GeoJSON
-              data={mixedPathLines}
-              style={mixedPathLinesPathOptions}
-              key={'mixedPathLines'}
-              onEachFeature={addInfo}
-            />
-          </FeatureGroup>
-        </GroupedLayer>
-        <GroupedLayer checked name="Radspur" group="Radverkehrs-Maßnahmen">
-          <FeatureGroup>
-            <GeoJSON
-              data={cycleLanes}
-              style={cycleLanesPathOptions}
-              key={'cycleLanes'}
-              onEachFeature={addInfo}
-            />
-          </FeatureGroup>
-        </GroupedLayer>
-        <GroupedLayer checked name="Radweg" group="Radverkehrs-Maßnahmen">
-          <FeatureGroup>
-            <GeoJSON
-              data={sepCycleLanes}
-              style={sepCycleLanesPathOptions}
-              key={'sepCycleLanes'}
-              onEachFeature={addInfo}
-            />
-          </FeatureGroup>
-        </GroupedLayer>
+        {/* Radverkehrs-Maßnahmen  */}
         <GroupedLayer
           checked
           name="Fahrradstraße 2.0"
           group="Radverkehrs-Maßnahmen"
         >
-          <FeatureGroup>
-            <GeoJSON
-              data={cyclingStreets}
-              style={cyclingstreetPathOptions}
-              key={'cyclingStreets'}
-              onEachFeature={addInfo}
-            />
-          </FeatureGroup>
+          {/* The Pane wrapping defines the overlay. The higher the zIndex the upper the layer */}
+          <Pane name="cyclingStreets" style={{ zIndex: 508 }}>
+            {/* The FeatureGroup wrapping is necessary, as only then all layers are cleared
+              when the side bar component for the bicycle infrastructure is unselected */}
+            <FeatureGroup>
+              <GeoJSON
+                data={cyclingStreets}
+                style={cyclingstreetPathOptions}
+                key={'cyclingStreets'}
+                onEachFeature={addInfo}
+              />
+            </FeatureGroup>
+          </Pane>
+        </GroupedLayer>
+        <GroupedLayer checked name="Radweg" group="Radverkehrs-Maßnahmen">
+          <Pane name="sepCycleLanes" style={{ zIndex: 506 }}>
+            <FeatureGroup>
+              <GeoJSON
+                data={sepCycleLanes}
+                style={sepCycleLanesPathOptions}
+                key={'sepCycleLanes'}
+                onEachFeature={addInfo}
+              />
+            </FeatureGroup>
+          </Pane>
+        </GroupedLayer>
+        <GroupedLayer checked name="Radspur" group="Radverkehrs-Maßnahmen">
+          <Pane name="cycleLanes" style={{ zIndex: 507 }}>
+            <FeatureGroup>
+              <GeoJSON
+                data={cycleLanes}
+                style={cycleLanesPathOptions}
+                key={'cycleLanes'}
+                onEachFeature={addInfo}
+              />
+            </FeatureGroup>
+          </Pane>
         </GroupedLayer>
         <GroupedLayer name="Fahrrad-Ampel" group="Radverkehrs-Maßnahmen">
-          <FeatureGroup>
-            <GeoJSON
-              data={trafficSignals}
-              pointToLayer={pointSignal}
-              key={'trafficSignals'}
-            />
-          </FeatureGroup>
+          <Pane name="trafficSignals" style={{ zIndex: 510 }}>
+            <FeatureGroup>
+              <GeoJSON
+                data={trafficSignals}
+                pointToLayer={pointSignal}
+                key={'trafficSignals'}
+              />
+            </FeatureGroup>
+          </Pane>
+        </GroupedLayer>
+
+        {/* Radwege-Netz  */}
+        <GroupedLayer checked name="Radwege-Netz" group="Radwege-Netz">
+          <Pane name="networkLines" style={{ zIndex: 504 }}>
+            <FeatureGroup>
+              <GeoJSON
+                data={networkLines}
+                style={networkPathOptions}
+                key={'networkLines'}
+              />
+            </FeatureGroup>
+          </Pane>
         </GroupedLayer>
         <GroupedLayer name="Weg-Beschilderung" group="Radwege-Netz">
-          <FeatureGroup>
-            <GeoJSON
-              data={wayfindingSigns}
-              pointToLayer={pointWayfinding}
-              key={'wayfindingSigns'}
-            />
-          </FeatureGroup>
+          <Pane name="wayfindingSigns" style={{ zIndex: 509 }}>
+            <FeatureGroup>
+              <GeoJSON
+                data={wayfindingSigns}
+                pointToLayer={pointWayfinding}
+                key={'wayfindingSigns'}
+              />
+            </FeatureGroup>
+          </Pane>
         </GroupedLayer>
-        <GroupedLayer
-          checked
-          name="Fahrrad-Laden"
-          group="Rad-Service"
-          icon={<ShopIcon />}
-        >
-          <MarkerClusterGroup
-            spiderfyDistanceMultiplier={3}
-            iconCreateFunction={createClusterCustomIconGreen}
-            polygonOptions={{
-              color: '#253a18',
-              weight: 2,
-              opacity: 0.8,
-              fillOpacity: 0.3,
-            }}
-          >
-            <GeoJSON
-              data={bicycleShops}
-              pointToLayer={pointShop}
-              key={'bicycleShops'}
-              onEachFeature={addInfo}
-            ></GeoJSON>
-          </MarkerClusterGroup>
-        </GroupedLayer>
+
+        {/* Parken und Laden */}
         <GroupedLayer
           checked
           name="Parken"
           group="Parken + Laden"
           icon={<ParkingIcon />}
         >
-          <MarkerClusterGroup
-            spiderfyDistanceMultiplier={3}
-            iconCreateFunction={createClusterCustomIconBlue}
-            polygonOptions={{
-              color: '#1c2b46',
-              weight: 2,
-              opacity: 0.8,
-              fillOpacity: 0.3,
-            }}
-            eventHandlers={{
-              add: (e: any) => {
-                dispatch(updateParkingOverlay(true));
-              },
-              remove: (e: any) => {
-                dispatch(updateParkingOverlay(false));
-              },
-            }}
-          >
-            <GeoJSON
-              data={parking}
-              pointToLayer={pointParking}
-              key={'parking'}
-              onEachFeature={addInfo}
-            ></GeoJSON>
-          </MarkerClusterGroup>
+          <Pane name="parking" style={{ zIndex: 515 }}>
+            <MarkerClusterGroup
+              spiderfyDistanceMultiplier={3}
+              iconCreateFunction={createClusterCustomIconBlue}
+              polygonOptions={{
+                color: '#1c2b46',
+                weight: 2,
+                opacity: 0.8,
+                fillOpacity: 0.3,
+              }}
+              eventHandlers={{
+                add: (e: any) => {
+                  dispatch(updateParkingOverlay(true));
+                },
+                remove: (e: any) => {
+                  dispatch(updateParkingOverlay(false));
+                },
+              }}
+              clusterPane={'parking'}
+            >
+              <GeoJSON
+                data={parking}
+                pointToLayer={pointParking}
+                key={'parking'}
+                onEachFeature={addInfo}
+              ></GeoJSON>
+            </MarkerClusterGroup>
+          </Pane>
         </GroupedLayer>
         <GroupedLayer
           checked
@@ -500,14 +455,45 @@ const BicycleInfrastructure = () => {
           group="Parken + Laden"
           icon={<ChargingIcon />}
         >
-          <FeatureGroup>
-            <GeoJSON
-              data={chargingStations}
-              pointToLayer={pointCharging}
-              key={'chargingStations'}
-              onEachFeature={addInfo}
-            />
-          </FeatureGroup>
+          <Pane name="chargingStations" style={{ zIndex: 516 }}>
+            <FeatureGroup>
+              <GeoJSON
+                data={chargingStations}
+                pointToLayer={pointCharging}
+                key={'chargingStations'}
+                onEachFeature={addInfo}
+              />
+            </FeatureGroup>
+          </Pane>
+        </GroupedLayer>
+
+        {/* Rad-Service  */}
+        <GroupedLayer
+          checked
+          name="Fahrrad-Laden"
+          group="Rad-Service"
+          icon={<ShopIcon />}
+        >
+          <Pane name="bicycleShops" style={{ zIndex: 514 }}>
+            <MarkerClusterGroup
+              spiderfyDistanceMultiplier={3}
+              iconCreateFunction={createClusterCustomIconGreen}
+              polygonOptions={{
+                color: '#253a18',
+                weight: 2,
+                opacity: 0.8,
+                fillOpacity: 0.3,
+              }}
+              clusterPane={'bicycleShops'}
+            >
+              <GeoJSON
+                data={bicycleShops}
+                pointToLayer={pointShop}
+                key={'bicycleShops'}
+                onEachFeature={addInfo}
+              ></GeoJSON>
+            </MarkerClusterGroup>
+          </Pane>
         </GroupedLayer>
         <GroupedLayer
           checked
@@ -515,44 +501,104 @@ const BicycleInfrastructure = () => {
           group="Rad-Service"
           icon={<RepairIcon fill="#000000" />}
         >
-          <FeatureGroup>
-            <GeoJSON
-              data={repairStations}
-              pointToLayer={pointRepair}
-              key={'repairStations'}
-              onEachFeature={addInfo}
-            />
-          </FeatureGroup>
+          <Pane name="repairStations" style={{ zIndex: 513 }}>
+            <FeatureGroup>
+              <GeoJSON
+                data={repairStations}
+                pointToLayer={pointRepair}
+                key={'repairStations'}
+                onEachFeature={addInfo}
+              />
+            </FeatureGroup>
+          </Pane>
         </GroupedLayer>
         <GroupedLayer checked name="Rad-Verleih" group="Rad-Service">
-          <FeatureGroup>
-            <GeoJSON
-              data={rentals}
-              pointToLayer={pointRental}
-              key={'rentals'}
-              onEachFeature={addInfo}
-            />
-          </FeatureGroup>
+          <Pane name="rentals" style={{ zIndex: 512 }}>
+            <FeatureGroup>
+              <GeoJSON
+                data={rentals}
+                pointToLayer={pointRental}
+                key={'rentals'}
+                onEachFeature={addInfo}
+              />
+            </FeatureGroup>
+          </Pane>
         </GroupedLayer>
         <GroupedLayer checked name="Schlauch-Automat" group="Rad-Service">
-          <FeatureGroup>
-            <GeoJSON
-              data={tubeVendings}
-              pointToLayer={pointTube}
-              key={'tubeVendings'}
-              onEachFeature={addInfo}
-            />
-          </FeatureGroup>
+          <Pane name="tubeVendings" style={{ zIndex: 511 }}>
+            <FeatureGroup>
+              <GeoJSON
+                data={tubeVendings}
+                pointToLayer={pointTube}
+                key={'tubeVendings'}
+                onEachFeature={addInfo}
+              />
+            </FeatureGroup>
+          </Pane>
         </GroupedLayer>
+
+        {/* Radverkehrs-Integration */}
         <GroupedLayer name="Bahnhof" group="Radverkehrs-Integration">
-          <FeatureGroup>
-            <GeoJSON
-              data={trainStations}
-              pointToLayer={pointTrain}
-              key={'trainStations'}
-              onEachFeature={addInfo}
-            />
-          </FeatureGroup>
+          <Pane name="trainStations" style={{ zIndex: 517 }}>
+            <FeatureGroup>
+              <GeoJSON
+                data={trainStations}
+                pointToLayer={pointTrain}
+                key={'trainStations'}
+                onEachFeature={addInfo}
+              />
+            </FeatureGroup>
+          </Pane>
+        </GroupedLayer>
+        <GroupedLayer name="Verkehrsberuhigt" group="Radverkehrs-Integration">
+          <Pane name="trafficCalming" style={{ zIndex: 502 }}>
+            <FeatureGroup>
+              <GeoJSON
+                data={trafficCalming}
+                style={trafficCalmingPathOptions}
+                key={'trafficCalming'}
+                onEachFeature={addInfo}
+              />
+            </FeatureGroup>
+          </Pane>
+        </GroupedLayer>
+        <GroupedLayer
+          name="Einbahnstraßen-Ausnahme"
+          group="Radverkehrs-Integration"
+        >
+          <Pane name="onewayExceptions" style={{ zIndex: 503 }}>
+            <FeatureGroup>
+              <GeoJSON
+                data={oneWayExceptions}
+                style={oneWayExceptionsPathOptions}
+                key={'onewayExceptions'}
+              />
+            </FeatureGroup>
+          </Pane>
+        </GroupedLayer>
+        <GroupedLayer name="Mix-Weg" group="Radverkehrs-Integration">
+          <Pane name="mixedPathLines" style={{ zIndex: 505 }}>
+            <FeatureGroup>
+              <GeoJSON
+                data={mixedPathLines}
+                style={mixedPathLinesPathOptions}
+                key={'mixedPathLines'}
+                onEachFeature={addInfo}
+              />
+            </FeatureGroup>
+          </Pane>
+        </GroupedLayer>
+        <GroupedLayer name="Mix-Fläche" group="Radverkehrs-Integration">
+          <Pane name="mixedPathPolygons" style={{ zIndex: 500 }}>
+            <FeatureGroup>
+              <GeoJSON
+                data={mixedPathPolygons}
+                style={mixedPathPolygonsPathOptions}
+                key={'mixedPathPolygons'}
+                onEachFeature={addInfo}
+              />
+            </FeatureGroup>
+          </Pane>
         </GroupedLayer>
       </LayerControl>
     </>

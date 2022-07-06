@@ -29,6 +29,7 @@ import { TIMEOUT } from '../components/Transition';
 import MarkerCluster from '../components/MapComponents/MarkerCluster';
 import BicycleInfrastructure from '../components/MapComponents/BicycleInfrastructure/BicycleInfrastructureData';
 import ParkingPolygons from '../components/MapComponents/BicycleInfrastructure/ParkingPolygon';
+import AdministrativeAreas from '../components/MapComponents/BicycleInfrastructure/AdministrativeArea';
 
 const Wrapper = styled.div`
   position: relative;
@@ -91,6 +92,7 @@ function Map() {
         />
         {features.bicycleinfrastructure && <ParkingPolygons />}
         {features.bicycleinfrastructure && <BicycleInfrastructure />}
+        {features.bicycleinfrastructure && <AdministrativeAreas />}
         <MarkerCluster />
       </MapContainer>
       <SidebarComponent></SidebarComponent>

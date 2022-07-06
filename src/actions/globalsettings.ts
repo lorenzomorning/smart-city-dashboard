@@ -25,10 +25,18 @@
  */
 
 export const UPDATE_PARKING_OVERLAY = 'UPDATE_PARKING_OVERLAY';
+export const UPDATE_EXPLORE_MODE = 'UPDATE_EXPLORE_MODE';
 
 export function updateParkingOverlay(parkingOverlay: any) {
   return {
     type: UPDATE_PARKING_OVERLAY,
     parkingOverlay,
+  };
+}
+
+export function updateExploreMode(exploreMode: any) {
+  return {
+    type: UPDATE_EXPLORE_MODE,
+    exploreMode,
   };
 }
