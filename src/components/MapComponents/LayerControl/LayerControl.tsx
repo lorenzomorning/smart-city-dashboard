@@ -11,6 +11,7 @@ import AccordionSummary from '@material-ui/core/AccordionSummary';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import LayersIcon from '@material-ui/icons/Layers';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import lodashGroupBy from 'lodash.groupby';
 import { LayersControlProvider } from './layerControlContext';
 
@@ -29,6 +30,26 @@ const IconLabel = styled.div`
     background-color: rgba(181, 181, 181, 0.35);
   }
 `;
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    panelSummary: {
+      flexDirection: 'row-reverse',
+      paddingLeft: '0px',
+      height: '20px',
+    },
+    heading: {
+      fontWeight: theme.typography.fontWeightBold,
+    },
+    innerMenuItem: {
+      paddingLeft: '32px',
+    },
+    expanded: {
+      padding: '0px',
+    },
+    accordionRoot: {},
+  })
+);
 
 const POSITION_CLASSES: { [key: string]: string } = {
   bottomleft: 'leaflet-bottom leaflet-left',
@@ -56,6 +77,7 @@ const LayerControl = ({ position, children }: IProps) => {
   const [layers, setLayers] = useState<ILayerObj[]>([]);
   const positionClass =
     (position && POSITION_CLASSES[position]) || POSITION_CLASSES.topright;
+  const classes = useStyles();
 
   const map = useMapEvents({
     layerremove: () => {
@@ -138,13 +160,19 @@ const LayerControl = ({ position, children }: IProps) => {
               )}
               {!collapsed &&
                 Object.keys(groupedLayers).map((section, index) => (
-                  <Accordion key={`${section} ${index}`}>
+                  <Accordion
+                    key={`${section} ${index}`}
+                    //classes={{ root: classes.accordionRoot }}
+                  >
                     <AccordionSummary
                       expandIcon={<ExpandMoreIcon />}
                       aria-controls="panel1a-content"
                       id="panel1a-header"
+                      className={classes.panelSummary}
                     >
-                      <Typography>{section}</Typography>
+                      <Typography className={classes.heading}>
+                        {section}
+                      </Typography>
                     </AccordionSummary>
                     {groupedLayers[section]?.map((layerObj, index) => (
                       <AccordionDetails key={`accDetails_${index}`}>
