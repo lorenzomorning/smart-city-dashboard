@@ -254,7 +254,7 @@ const SidebarComponent = () => {
             onChange={() => dispatch(updateExploreMode(!exploreMode))}
           />
           <CheckBoxLabel htmlFor="checkbox" />
-          <span>Erkundungsmodus</span>
+          <span>Stadtteil-Modus</span>
         </CheckBoxWrapper>
       )}
     </Sidebar>

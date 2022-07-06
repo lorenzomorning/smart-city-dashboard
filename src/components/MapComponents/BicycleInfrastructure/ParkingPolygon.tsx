@@ -28,14 +28,15 @@ import {
 } from 'react-leaflet';
 
 const ParkingPolygons = () => {
+  // Retrieve data from global store
   const BicycleInfrastructureData = useSelector(
     (state: RootStateOrAny) => state.bicycleinfrastructure.data // array of features []
   );
-  // Retrieve whether parking points are shown or not
   const parkingOverlay = useSelector(
     (state: RootStateOrAny) => state.globalsettings.parkingOverlay
   );
-  // Filter, style and ref parking polygons
+
+  // Filter and style parking polygons
   const parkingPolygons = BicycleInfrastructureData.features.filter(
     (feature: any) =>
       feature.properties.bike_infrastructure_type === 'parking' &&

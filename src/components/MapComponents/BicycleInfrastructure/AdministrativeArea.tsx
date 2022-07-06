@@ -28,24 +28,77 @@ import {
 } from 'react-leaflet';
 
 const AdministrativeAreas = () => {
+  // retrieve data from the store
   const BicycleInfrastructureData = useSelector(
     (state: RootStateOrAny) => state.bicycleinfrastructure.data // array of features []
   );
-  // Retrieve whether exploreMode is activated
   const exploreMode = useSelector(
     (state: RootStateOrAny) => state.globalsettings.exploreMode
   );
-  console.log('exploreMode', exploreMode);
-  // Filter, style and ref parking polygons
+
+  // Create event functions
+  function clickAdminArea(e: any) {
+    e.target.setStyle({
+      color: '#000000',
+      weight: 2,
+      opacity: 1,
+      fillColor: '#4d514d',
+      fillOpacity: 0,
+    });
+    if (e.target.isTooltipOpen()) {
+      e.target.closeTooltip();
+    }
+  }
+  function popupCloseAdminArea(e: any) {
+    e.target.setStyle({
+      color: '#000000',
+      weight: 2,
+      opacity: 1,
+      fillColor: '#4d514d',
+      fillOpacity: 0.8,
+    });
+  }
+  function mouseMoveAdminArea(e: any) {
+    if (!e.target.isPopupOpen()) {
+      e.target.openTooltip(e.latlng);
+    }
+  }
+  function mouseOverAdminArea(e: any) {
+    if (e.target.isPopupOpen()) {
+      e.target.closeTooltip();
+    }
+  }
+
+  function onEachAdminArea(feature: any, layer: any) {
+    // bind popup with dashboard information on every admin area
+    layer.bindPopup(feature.properties.tags.name, {
+      autoClose: false,
+      closeOnClick: false,
+    });
+    // bind tooltip with the name to every admin area
+    layer.bindTooltip(feature.properties.tags.name, {
+      pane: 'tooltip',
+    });
+    // organize mouse events on admin area
+    layer.on({
+      click: clickAdminArea,
+      popupclose: popupCloseAdminArea,
+      mousemove: mouseMoveAdminArea,
+      mouseover: mouseOverAdminArea,
+    });
+  }
+
+  // Filter and style admininstrative Areas
   const administrativeAreas = BicycleInfrastructureData.features.filter(
     (feature: any) =>
       feature.properties.bike_infrastructure_type === 'admin_area'
   );
   let adminAreaOptions = {
-    color: '#969696',
+    color: '#000000',
     weight: 2,
-    opacity: 0.8,
-    fillOpacity: 0.5,
+    opacity: 1,
+    fillColor: '#4d514d',
+    fillOpacity: 0.8,
   };
 
   // return Feature Group only when zoom is higher than 16 and if parkingOverlay === true
@@ -53,11 +106,12 @@ const AdministrativeAreas = () => {
     <>
       {exploreMode && (
         <FeatureGroup>
-          <Pane name="administrativeAreas" style={{ zIndex: 600 }}>
+          <Pane name="administrativeAreas" style={{ zIndex: 650 }}>
             <GeoJSON
               data={administrativeAreas}
               style={adminAreaOptions}
               key={'administrativeAreas'}
+              onEachFeature={onEachAdminArea}
             />
           </Pane>
         </FeatureGroup>

@@ -20,7 +20,7 @@ import React, { useEffect, useState } from 'react';
 import { RootStateOrAny, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import SidebarComponent from '../components/MapComponents/SidebarComponent';
-import { MapContainer, TileLayer, ZoomControl } from 'react-leaflet';
+import { MapContainer, TileLayer, ZoomControl, Pane } from 'react-leaflet';
 import Leaflet from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { TIMEOUT } from '../components/Transition';
@@ -94,6 +94,7 @@ function Map() {
         {features.bicycleinfrastructure && <BicycleInfrastructure />}
         {features.bicycleinfrastructure && <AdministrativeAreas />}
         <MarkerCluster />
+        <Pane name="tooltip" style={{ zIndex: 660 }}></Pane>
       </MapContainer>
       <SidebarComponent></SidebarComponent>
     </Wrapper>
