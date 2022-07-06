@@ -19,7 +19,13 @@
 //import L from 'leaflet';
 import React, { useState } from 'react';
 import { useSelector, RootStateOrAny } from 'react-redux';
-import { FeatureGroup, GeoJSON, useMap, useMapEvent } from 'react-leaflet';
+import {
+  FeatureGroup,
+  GeoJSON,
+  Pane,
+  useMap,
+  useMapEvent,
+} from 'react-leaflet';
 
 const ParkingPolygons = () => {
   const BicycleInfrastructureData = useSelector(
@@ -52,13 +58,15 @@ const ParkingPolygons = () => {
   return (
     <>
       {zoom >= 16 && parkingOverlay && (
-        <FeatureGroup>
-          <GeoJSON
-            data={parkingPolygons}
-            style={parkingPolygonsPathOptions}
-            key={'parkingPolygons'}
-          />
-        </FeatureGroup>
+        <Pane name="parkinPolygons" style={{ zIndex: 501 }}>
+          <FeatureGroup>
+            <GeoJSON
+              data={parkingPolygons}
+              style={parkingPolygonsPathOptions}
+              key={'parkingPolygons'}
+            />
+          </FeatureGroup>
+        </Pane>
       )}
     </>
   );

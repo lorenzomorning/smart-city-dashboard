@@ -60,10 +60,11 @@ const MarkerCluster = () => {
   const features = useSelector((state: RootStateOrAny) => state.map.features);
 
   return (
-    <Pane name="markerClusterGroup" style={{ zIndex: 550 }}>
+    <Pane name="markerClusterGroup" style={{ zIndex: 600 }}>
       <MarkerClusterGroup
         spiderfyDistanceMultiplier={3}
         iconCreateFunction={createClusterCustomIcon}
+        clusterPane={'markerClusterGroup'}
       >
         {features.opensensemap && <WeatherMarker></WeatherMarker>}
         {features.aasee && <AaseeMarker></AaseeMarker>}

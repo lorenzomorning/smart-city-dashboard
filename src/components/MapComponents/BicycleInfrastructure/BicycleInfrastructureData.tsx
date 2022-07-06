@@ -450,7 +450,6 @@ const BicycleInfrastructure = () => {
           </Pane>
         </GroupedLayer>
         <GroupedLayer
-          checked
           name="Lade-Station"
           group="Parken + Laden"
           icon={<ChargingIcon />}
@@ -496,7 +495,6 @@ const BicycleInfrastructure = () => {
           </Pane>
         </GroupedLayer>
         <GroupedLayer
-          checked
           name="DIY-Station"
           group="Rad-Service"
           icon={<RepairIcon fill="#000000" />}
@@ -512,7 +510,7 @@ const BicycleInfrastructure = () => {
             </FeatureGroup>
           </Pane>
         </GroupedLayer>
-        <GroupedLayer checked name="Rad-Verleih" group="Rad-Service">
+        <GroupedLayer name="Rad-Verleih" group="Rad-Service">
           <Pane name="rentals" style={{ zIndex: 512 }}>
             <FeatureGroup>
               <GeoJSON
@@ -524,7 +522,7 @@ const BicycleInfrastructure = () => {
             </FeatureGroup>
           </Pane>
         </GroupedLayer>
-        <GroupedLayer checked name="Schlauch-Automat" group="Rad-Service">
+        <GroupedLayer name="Schlauch-Automat" group="Rad-Service">
           <Pane name="tubeVendings" style={{ zIndex: 511 }}>
             <FeatureGroup>
               <GeoJSON
