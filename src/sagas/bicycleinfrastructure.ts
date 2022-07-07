@@ -28,6 +28,8 @@ import { ENDPOINT_AA } from './bicycleinfrastructureHelpers/overpassQueryAA';
 import {
   addBikeInfrastructureType,
   duplicatePolygonsToPoints,
+  duplicateTrafficCalming,
+  splitTrafficSignal,
 } from './bicycleinfrastructureHelpers/helperFunctions';
 
 const osmtogeojson = require('osmtogeojson');
@@ -44,22 +46,25 @@ export function* fetchBicycleInfrastructureData(): any {
   try {
     // Biycle Infrastructure Data from OSM
     // console.log('start API-Request BI data...');
-    // const responseBI = yield call(fetch, ENDPOINT_BI);
+    // const responseBi = yield call(fetch, ENDPOINT_BI);
     // console.log('finish API-Request BI data');
-    // const osmdataBI = yield responseBI.json();
-    // const dataBI = osmtogeojson(osmdataBI);
-    const responseBI = yield call(fetch, '/dataBI.geojson');
-    const dataBI = yield responseBI.json();
-    //console.log('Bicycle Infrastructure Data', dataBI);
-    const dataBIType = addBikeInfrastructureType(dataBI);
-    console.log(dataBIType);
-    const sepLanes = dataBIType.features.filter(
-      (feature: any) =>
-        feature.properties.bike_infrastructure_type === 'separated_cycle_lane'
+    // const osmdataBi = yield responseBi.json();
+    // const dataBi = osmtogeojson(osmdataBi);
+    const responseBi = yield call(fetch, '/dataBI.geojson');
+    const dataBi = yield responseBi.json();
+    console.log('Bicycle Infrastructure Data', dataBi);
+    let dataBiType = addBikeInfrastructureType(dataBi);
+    // check of any nd appear in the FeatureCollection
+    const nd = dataBiType.features.filter(
+      (feature: any) => feature.properties.bike_infrastructure_type === 'nd'
     );
-    console.log('sepLanes', sepLanes);
-
-    console.log('Duplicated BI', duplicatePolygonsToPoints(dataBI));
+    console.log('NDs', nd);
+    // duplicate Polygons to Points
+    dataBiType = duplicatePolygonsToPoints(dataBiType);
+    // duplicate overwritten traffic calmed ways
+    dataBiType = duplicateTrafficCalming(dataBiType);
+    // split Traffic Signal LineStrings
+    splitTrafficSignal(dataBiType);
 
     //  Network Data from OSM
     // console.log('start API-Request NW data...');
@@ -81,7 +86,7 @@ export function* fetchBicycleInfrastructureData(): any {
     const dataAA = yield responseAA.json();
     console.log('Administrative Areas Data', dataAA);
 
-    const data = dataBIType;
+    const data = dataBiType;
     yield put({
       type: RENDER_BICYCLEINFRASTRUCTURE_DATA,
       bicycleinfrastructure: data,
