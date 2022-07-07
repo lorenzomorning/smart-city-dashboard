@@ -39,28 +39,34 @@ export function* fetchBicycleInfrastructureDataPeriodically() {
 export function* fetchBicycleInfrastructureData(): any {
   try {
     // Biycle Infrastructure Data from OSM
-    console.log('start API-Request BI data...');
-    const response_bi = yield call(fetch, ENDPOINT_BI);
-    console.log('finish API-Request BI data');
-    const osmdata_bi = yield response_bi.json();
-    const data_bi = osmtogeojson(osmdata_bi);
-    console.log('Bicycle Infrastructure Data', data_bi);
+    // console.log('start API-Request BI data...');
+    // const response_bi = yield call(fetch, ENDPOINT_BI);
+    // console.log('finish API-Request BI data');
+    // const osmdata_bi = yield response_bi.json();
+    // const data_bi = osmtogeojson(osmdata_bi);
+    const responseBI = yield call(fetch, 'public/dataBI.geojson');
+    const dataBI = yield responseBI.json();
+    console.log('Bicycle Infrastructure Data', dataBI);
     //  Network Data from OSM
-    console.log('start API-Request NW data...');
-    const response_nw = yield call(fetch, ENDPOINT_NW);
-    console.log('finish API-Request NW data');
-    const osmdata_nw = yield response_nw.json();
-    const data_nw = osmtogeojson(osmdata_nw);
-    console.log('Network Data', data_nw);
+    // console.log('start API-Request NW data...');
+    // const response_nw = yield call(fetch, ENDPOINT_NW);
+    // console.log('finish API-Request NW data');
+    // const osmdata_nw = yield response_nw.json();
+    // const data_nw = osmtogeojson(osmdata_nw);
+    const responseNW = yield call(fetch, 'public/dataNW.geojson');
+    const dataNW = yield responseNW.json();
+    console.log('Network Data', dataNW);
     // Administrative areas from OSM
-    console.log('start API-Request AA data...');
-    const response_aa = yield call(fetch, ENDPOINT_AA);
-    console.log('finish API-Request AA data');
-    const osmdata_aa = yield response_aa.json();
-    const data_aa = osmtogeojson(osmdata_aa);
-    console.log('Administrative Areas Data', data_aa);
+    // console.log('start API-Request AA data...');
+    // const response_aa = yield call(fetch, ENDPOINT_AA);
+    // console.log('finish API-Request AA data');
+    // const osmdata_aa = yield response_aa.json();
+    // const data_aa = osmtogeojson(osmdata_aa);
+    const responseAA = yield call(fetch, 'public/dataBI.geojson');
+    const dataAA = yield responseAA.json();
+    console.log('Administrative Areas Data', dataAA);
 
-    const data = data_bi;
+    const data = dataBI;
     yield put({
       type: RENDER_BICYCLEINFRASTRUCTURE_DATA,
       bicycleinfrastructure: data,
