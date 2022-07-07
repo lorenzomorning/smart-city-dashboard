@@ -25,6 +25,10 @@ import {
 import { ENDPOINT_BI } from './bicycleinfrastructureHelpers/overpassQueryBI';
 import { ENDPOINT_NW } from './bicycleinfrastructureHelpers/overpassQueryNW';
 import { ENDPOINT_AA } from './bicycleinfrastructureHelpers/overpassQueryAA';
+import {
+  addBikeInfrastructureType,
+  duplicatePolygonsToPoints,
+} from './bicycleinfrastructureHelpers/helperFunctions';
 
 const osmtogeojson = require('osmtogeojson');
 const INTERVAL = 60 * 60 * 24; // 1 day
@@ -40,33 +44,44 @@ export function* fetchBicycleInfrastructureData(): any {
   try {
     // Biycle Infrastructure Data from OSM
     // console.log('start API-Request BI data...');
-    // const response_bi = yield call(fetch, ENDPOINT_BI);
+    // const responseBI = yield call(fetch, ENDPOINT_BI);
     // console.log('finish API-Request BI data');
-    // const osmdata_bi = yield response_bi.json();
-    // const data_bi = osmtogeojson(osmdata_bi);
-    const responseBI = yield call(fetch, 'public/dataBI.geojson');
+    // const osmdataBI = yield responseBI.json();
+    // const dataBI = osmtogeojson(osmdataBI);
+    const responseBI = yield call(fetch, '/dataBI.geojson');
     const dataBI = yield responseBI.json();
-    console.log('Bicycle Infrastructure Data', dataBI);
+    //console.log('Bicycle Infrastructure Data', dataBI);
+    const dataBIType = addBikeInfrastructureType(dataBI);
+    console.log(dataBIType);
+    const sepLanes = dataBIType.features.filter(
+      (feature: any) =>
+        feature.properties.bike_infrastructure_type === 'separated_cycle_lane'
+    );
+    console.log('sepLanes', sepLanes);
+
+    console.log('Duplicated BI', duplicatePolygonsToPoints(dataBI));
+
     //  Network Data from OSM
     // console.log('start API-Request NW data...');
     // const response_nw = yield call(fetch, ENDPOINT_NW);
     // console.log('finish API-Request NW data');
     // const osmdata_nw = yield response_nw.json();
     // const data_nw = osmtogeojson(osmdata_nw);
-    const responseNW = yield call(fetch, 'public/dataNW.geojson');
+    const responseNW = yield call(fetch, '/dataNW.geojson');
     const dataNW = yield responseNW.json();
     console.log('Network Data', dataNW);
+
     // Administrative areas from OSM
     // console.log('start API-Request AA data...');
     // const response_aa = yield call(fetch, ENDPOINT_AA);
     // console.log('finish API-Request AA data');
     // const osmdata_aa = yield response_aa.json();
     // const data_aa = osmtogeojson(osmdata_aa);
-    const responseAA = yield call(fetch, 'public/dataBI.geojson');
+    const responseAA = yield call(fetch, '/dataBI.geojson');
     const dataAA = yield responseAA.json();
     console.log('Administrative Areas Data', dataAA);
 
-    const data = dataBI;
+    const data = dataBIType;
     yield put({
       type: RENDER_BICYCLEINFRASTRUCTURE_DATA,
       bicycleinfrastructure: data,
