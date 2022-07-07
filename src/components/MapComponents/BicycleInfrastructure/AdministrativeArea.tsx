@@ -19,7 +19,16 @@
 //import L from 'leaflet';
 import React, { useState } from 'react';
 import { useSelector, RootStateOrAny } from 'react-redux';
-import { FeatureGroup, GeoJSON, Pane } from 'react-leaflet';
+import {
+  FeatureGroup,
+  GeoJSON,
+  Pane,
+  Polygon,
+  Popup,
+  Tooltip,
+} from 'react-leaflet';
+import flip from '@turf/flip';
+import { PopupContent } from '../styles';
 
 const AdministrativeAreas = () => {
   // retrieve data from the store
@@ -29,6 +38,55 @@ const AdministrativeAreas = () => {
   const exploreMode = useSelector(
     (state: RootStateOrAny) => state.globalsettings.exploreMode
   );
+
+  // Filter and style admininstrative Areas
+  const administrativeAreas = BicycleInfrastructureData.features.filter(
+    (feature: any) =>
+      feature.properties.bike_infrastructure_type === 'admin_area'
+  );
+  let adminAreaOptions = {
+    color: '#000000',
+    weight: 2,
+    opacity: 1,
+    fillColor: '#4d514d',
+    fillOpacity: 0.8,
+  };
+
+  // add exemplary data to administrative Area 'Innenstadtring'
+  const arrayLength = administrativeAreas.length;
+  for (var i = 0; i < arrayLength; i++) {
+    if (administrativeAreas[i].properties.tags.name === 'Innenstadtring') {
+      console.log('Innenstadtring before', administrativeAreas[i]);
+      administrativeAreas[i].properties.attributes = {};
+      administrativeAreas[i].properties.attributes.parking_indicator = {
+        facilities: 20,
+        capacity: {
+          sumStands: 40,
+          unknownFacilities: 15,
+        },
+        weatherProtection: {
+          yesFacilities: 2,
+          noFacilities: 10,
+          unknownFacilities: 8,
+        },
+        theftProtection: {
+          yesFacilities: 2,
+          noFacilities: 10,
+          unknownFacilities: 8,
+        },
+      };
+      administrativeAreas[i].properties.attributes.lane_indicator = {
+        lenghtCyclingStreet: 2412,
+      };
+      administrativeAreas[i].properties.attributes.service_indicator = {
+        shops: 5,
+        diyStations: 0,
+        rentals: 1,
+        tubeVendingMachine: 2,
+      };
+      console.log('Innenstadtring after', administrativeAreas[i]);
+    }
+  }
 
   // Create event functions
   function clickAdminArea(e: any) {
@@ -63,50 +121,35 @@ const AdministrativeAreas = () => {
     }
   }
 
-  function onEachAdminArea(feature: any, layer: any) {
-    // bind popup with dashboard information on every admin area
-    layer.bindPopup(feature.properties.tags.name, {
-      autoClose: false,
-      closeOnClick: false,
-    });
-    // bind tooltip with the name to every admin area
-    layer.bindTooltip(feature.properties.tags.name, {
-      pane: 'tooltip',
-    });
-    // organize mouse events on admin area
-    layer.on({
-      click: clickAdminArea,
-      popupclose: popupCloseAdminArea,
-      mousemove: mouseMoveAdminArea,
-      mouseover: mouseOverAdminArea,
-    });
-  }
-
-  // Filter and style admininstrative Areas
-  const administrativeAreas = BicycleInfrastructureData.features.filter(
-    (feature: any) =>
-      feature.properties.bike_infrastructure_type === 'admin_area'
-  );
-  let adminAreaOptions = {
-    color: '#000000',
-    weight: 2,
-    opacity: 1,
-    fillColor: '#4d514d',
-    fillOpacity: 0.8,
-  };
-
   // return Feature Group only when zoom is higher than 16 and if parkingOverlay === true
   return (
     <>
       {exploreMode && (
         <FeatureGroup>
           <Pane name="administrativeAreas" style={{ zIndex: 650 }}>
-            <GeoJSON
-              data={administrativeAreas}
-              style={adminAreaOptions}
-              key={'administrativeAreas'}
-              onEachFeature={onEachAdminArea}
-            />
+            {administrativeAreas.map((feature: any) => {
+              console.log(feature.geometry.coordinates);
+              return (
+                <Polygon
+                  positions={flip(feature).geometry.coordinates}
+                  key={feature.properties.id}
+                  pathOptions={adminAreaOptions}
+                  eventHandlers={{
+                    click: clickAdminArea,
+                    popupclose: popupCloseAdminArea,
+                    mousemove: mouseMoveAdminArea,
+                    mouseover: mouseOverAdminArea,
+                  }}
+                >
+                  <Tooltip pane="tooltip">
+                    {feature.properties.tags.name}
+                  </Tooltip>
+                  <Popup pane="popup" autoClose={false} closeOnClick={false}>
+                    <PopupContent>{feature.properties.tags.name}</PopupContent>
+                  </Popup>
+                </Polygon>
+              );
+            })}
           </Pane>
         </FeatureGroup>
       )}

@@ -94,7 +94,8 @@ function Map() {
         {features.bicycleinfrastructure && <BicycleInfrastructure />}
         {features.bicycleinfrastructure && <AdministrativeAreas />}
         <MarkerCluster />
-        <Pane name="tooltip" style={{ zIndex: 660 }}></Pane>
+        <Pane name="popup" style={{ zIndex: 660 }}></Pane>
+        <Pane name="tooltip" style={{ zIndex: 670 }}></Pane>
       </MapContainer>
       <SidebarComponent></SidebarComponent>
     </Wrapper>

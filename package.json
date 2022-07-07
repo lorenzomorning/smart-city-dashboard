@@ -5,6 +5,7 @@
   "dependencies": {
     "@material-ui/core": "4.11.0",
     "@material-ui/icons": "4.9.1",
+    "@turf/flip": "^6.5.0",
     "@types/lodash.groupby": "^4.6.7",
     "apexcharts": "ekhmoi/apexcharts.js",
     "beautiful-react-hooks": "^0.31.0",

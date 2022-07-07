@@ -20,7 +20,7 @@ import L from 'leaflet';
 //import React, { useEffect, useState } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { useSelector, RootStateOrAny, useDispatch } from 'react-redux';
-import { FeatureGroup, GeoJSON, Pane } from 'react-leaflet';
+import { FeatureGroup, GeoJSON, Pane, Popup } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
 import LayerControl, { GroupedLayer } from '../LayerControl/LayerControl';
 
@@ -43,6 +43,7 @@ import BiMarker from './BiMarker';
 import { createClusterCustomIconBlue } from './ClusterMarkerIcons';
 import { createClusterCustomIconGreen } from './ClusterMarkerIcons';
 import { addInfo } from './PopupAddInfo';
+import { PopupContent } from '../styles';
 
 const BicycleInfrastructure = () => {
   const dispatch = useDispatch();

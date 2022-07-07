@@ -19,23 +19,28 @@
 // Function add info automatically creates a table for the popoup with the entries from feature.properties.attributes
 export function addInfo(feature: any, layer: any) {
   let bIType = feature.properties.bike_infrastructure_type;
-  if (feature.properties && feature.properties.attributes) {
+  let heading =
+    "<p style='text-align:center; font-size:150%; font-weight:bold;'> " +
+    bIType +
+    ' </p>';
+  // Create table if attributes are filled
+  if (feature.properties?.attributes.length > 0) {
     let attributes = feature.properties.attributes;
-    var html_table =
-      "<p style='text-align:center; font-size:150%; font-weight:bold;'> " +
-      bIType +
-      " </p> <table class='table table-striped'> <tbody>";
+    let html_table =
+      heading +
+      "<table class='table is-striped is-narrow'> <tbody> <tr> <th> Weitere Infos </th> <th> </th> <tr>";
     // loop through the dictionary to feed the table with rows
     attributes.forEach((attr: any) => {
       for (let key in attr) {
         let value = attr[key];
-        var tr =
-          ' <tr> </th> <td> ' + key + ': </td> <td> ' + value + '</td> </tr>';
+        let tr = ' <tr> <td> ' + key + '</td> <td> ' + value + '</td> </tr>';
         html_table = html_table + tr;
       }
     });
     // close the table
     html_table = html_table + ' </tbody> </table>';
     layer.bindPopup(html_table);
+  } else if (feature.properties?.attributes.length === 0) {
+    layer.bindPopup(heading);
   }
 }
