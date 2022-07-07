@@ -19,13 +19,7 @@
 //import L from 'leaflet';
 import React, { useState } from 'react';
 import { useSelector, RootStateOrAny } from 'react-redux';
-import {
-  FeatureGroup,
-  GeoJSON,
-  Pane,
-  useMap,
-  useMapEvent,
-} from 'react-leaflet';
+import { FeatureGroup, GeoJSON, Pane } from 'react-leaflet';
 
 const AdministrativeAreas = () => {
   // retrieve data from the store
