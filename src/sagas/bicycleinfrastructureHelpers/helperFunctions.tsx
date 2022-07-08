@@ -235,7 +235,7 @@ export function duplicateTrafficCalming(dataBiType: any) {
  * @param FeatureCollection
  * @return FeatureCollection
  */
-export function splitTrafficSignal(dataBiType: any) {
+export function splitTrafficSignalLines(dataBiType: any) {
   // Filter dataBiType
   const trafficSignalLines = dataBiType.features.filter(
     (feature: any) =>
@@ -248,7 +248,18 @@ export function splitTrafficSignal(dataBiType: any) {
   // convert it to a point and push it to dataBi
   const arrayLength = trafficSignalLines.length;
   for (var i = 0; i < arrayLength; i++) {
-    let feature = trafficSignalLines[i];
+    // Deep copy of end Point and convert to Point
+    let featureCopy = JSON.parse(JSON.stringify(trafficSignalLines[i]));
+    featureCopy.geometry.type = 'Point';
+    featureCopy.geometry.coordinates = featureCopy.geometry.coordinates.slice(
+      -1
+    )[0];
+    console.log('FeatureCopy', featureCopy);
+    dataBiType.features.push(featureCopy);
+    // Convert start to Point
+    trafficSignalLines[i].geometry.type = 'Point';
+    trafficSignalLines[i].geometry.coordinates =
+      trafficSignalLines[i].geometry.coordinates[0];
   }
-  //return dataBiType;
+  return dataBiType;
 }

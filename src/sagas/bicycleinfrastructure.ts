@@ -29,7 +29,7 @@ import {
   addBikeInfrastructureType,
   duplicatePolygonsToPoints,
   duplicateTrafficCalming,
-  splitTrafficSignal,
+  splitTrafficSignalLines,
 } from './bicycleinfrastructureHelpers/helperFunctions';
 
 const osmtogeojson = require('osmtogeojson');
@@ -64,7 +64,7 @@ export function* fetchBicycleInfrastructureData(): any {
     // duplicate overwritten traffic calmed ways
     dataBiType = duplicateTrafficCalming(dataBiType);
     // split Traffic Signal LineStrings
-    splitTrafficSignal(dataBiType);
+    dataBiType = splitTrafficSignalLines(dataBiType);
 
     //  Network Data from OSM
     // console.log('start API-Request NW data...');
