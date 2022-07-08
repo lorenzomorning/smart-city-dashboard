@@ -26,6 +26,7 @@ import { ENDPOINT_BI } from './bicycleinfrastructureHelpers/overpassQueryBI';
 import { ENDPOINT_NW } from './bicycleinfrastructureHelpers/overpassQueryNW';
 import { ENDPOINT_AA } from './bicycleinfrastructureHelpers/overpassQueryAA';
 import {
+  addAttributes,
   addBikeInfrastructureType,
   duplicatePolygonsToPoints,
   duplicateTrafficCalming,
@@ -65,6 +66,8 @@ export function* fetchBicycleInfrastructureData(): any {
     dataBiType = duplicateTrafficCalming(dataBiType);
     // split Traffic Signal LineStrings
     dataBiType = splitTrafficSignalLines(dataBiType);
+    // add attributes for every Feature
+    dataBiType = addAttributes(dataBiType);
 
     //  Network Data from OSM
     // console.log('start API-Request NW data...');

@@ -17,6 +17,8 @@
  */
 
 import centroid from '@turf/centroid';
+import { featureGroup } from 'leaflet';
+import { property } from 'lodash';
 
 /**
  * addBikeInfrastructureType to categorize the dataBI according to each
@@ -31,8 +33,6 @@ export function addBikeInfrastructureType(dataBi: any) {
     let feature = dataBi.features[i];
     let keys = Object.keys(feature.properties);
     let values = Object.values(feature.properties);
-    const cycleway = (subkey: any) => subkey.includes('cycleway');
-    const share = (subvalue: any) => subvalue.includes('share');
 
     // Traffic calming
     if (
@@ -55,6 +55,8 @@ export function addBikeInfrastructureType(dataBi: any) {
       dataBi.features[i].properties.bike_infrastructure_type =
         'separated_cycle_lane';
     }
+    const cycleway = (subkey: any) => subkey.includes('cycleway');
+    const share = (subvalue: any) => subvalue.includes('share');
     if (keys.some(cycleway)) {
       if (values.includes('track')) {
         dataBi.features[i].properties.bike_infrastructure_type =
@@ -242,7 +244,6 @@ export function splitTrafficSignalLines(dataBiType: any) {
       feature.properties.bike_infrastructure_type === 'traffic_signal' &&
       feature.geometry.type === 'LineString'
   );
-  console.log('Traffic Signal Lines', trafficSignalLines);
 
   // Iterate through the features array, deep copy matches,
   // convert it to a point and push it to dataBi
@@ -254,12 +255,432 @@ export function splitTrafficSignalLines(dataBiType: any) {
     featureCopy.geometry.coordinates = featureCopy.geometry.coordinates.slice(
       -1
     )[0];
-    console.log('FeatureCopy', featureCopy);
     dataBiType.features.push(featureCopy);
     // Convert start to Point
     trafficSignalLines[i].geometry.type = 'Point';
     trafficSignalLines[i].geometry.coordinates =
       trafficSignalLines[i].geometry.coordinates[0];
+  }
+  return dataBiType;
+}
+
+/**
+ * addAttributes takes every Feature from the FeatureCollection, selects specific
+ * OSM properties and writes them to a attributes array of single objecst
+ * @param FeatureCollection
+ * @return FeatureCollection
+ */
+export function addAttributes(dataBiType: any) {
+  const arrayLength = dataBiType.features.length;
+  for (var i = 0; i < arrayLength; i++) {
+    let properties = dataBiType.features[i].properties;
+    let keys = Object.keys(properties);
+    let attributesFeature = Array();
+
+    // Add parking attributes (https://wiki.openstreetmap.org/wiki/Tag:amenity%3Dbicycle_parking)
+    if (properties.bike_infrastructure_type === 'parking') {
+      // Name
+      if (properties.name) {
+        attributesFeature.push({ Name: properties.name });
+      }
+      // Capacity
+      if (properties.capacity) {
+        attributesFeature.push({ Kapazität: properties.capacity });
+      }
+      if (!properties.capacity) {
+        attributesFeature.push({ Kapazität: 'Unbekannt' });
+      }
+
+      // Parking type + weather protection + theft protection
+      if (properties.bicycle_parking) {
+        attributesFeature.push({ Typ: properties.bicycle_parking });
+        if (
+          ['shed', 'lockers', 'building'].includes(properties.bicycle_parking)
+        ) {
+          if (!keys.includes('surveillance')) {
+            attributesFeature.push({ Diebstahlsicher: 'Ja' });
+          }
+          if (!keys.includes('covered')) {
+            attributesFeature.push({ Wettergeschützt: 'Ja' });
+          }
+        }
+        if (
+          !['shed', 'lockers', 'building'].includes(properties.bicycle_parking)
+        ) {
+          if (!keys.includes('surveillance')) {
+            attributesFeature.push({ Diebstahlsicher: 'Unbekannt' });
+          }
+          if (!keys.includes('covered')) {
+            attributesFeature.push({ Wettergeschützt: 'Unbekannt' });
+          }
+        }
+      }
+      // Theft protection
+      if (properties.surveillance) {
+        attributesFeature.push({ Diebstahlsicher: properties.surveillance });
+      }
+      if (!properties.surveillance && !properties.bicycle_parking) {
+        attributesFeature.push({ Diebstahlsicher: 'Unbekannt' });
+      }
+      // Weather protection
+      if (properties.covered) {
+        attributesFeature.push({ Wettergeschützt: properties.covered });
+      }
+      if (!properties.covered && !properties.bicycle_parking) {
+        attributesFeature.push({ Wettereschützt: 'Unbekannt' });
+      }
+      // Access
+      if (properties.access) {
+        attributesFeature.push({ Zugang: properties.access });
+      }
+      // Fee
+      if (properties.fee) {
+        attributesFeature.push({ Gebühren: properties.fee });
+      }
+      // Add any provided service
+      const service = (subkey: any) => subkey.includes('service');
+      if (keys.some(service)) {
+        let serviceKeys = Array();
+        keys.forEach(function (subkey) {
+          if (subkey.includes('service') && properties[subkey] === 'yes') {
+            serviceKeys.push(subkey.split(':')[2]);
+          }
+        });
+        if (serviceKeys.length > 1) {
+          attributesFeature.push({ Service: serviceKeys.join(', ') });
+        }
+        if (serviceKeys.length === 1) {
+          attributesFeature.push({ Service: serviceKeys[0] });
+        }
+      }
+      // Add attributes
+      dataBiType.features[i].properties.attributes = attributesFeature;
+      continue;
+    }
+
+    // Add charging station attributes (https://wiki.openstreetmap.org/wiki/Tag:amenity%3Dcharging_station)
+    if (properties.bike_infrastructure_type === 'charging_station') {
+      if (properties.operator) {
+        attributesFeature.push({ Anbieter: properties.operator });
+      }
+      // Add pure capacity
+      if (properties.capacity) {
+        attributesFeature.push({ Gesamtkapazität: properties.capacity });
+      }
+      // Add socket type
+      const socket = (subkey: any) => subkey.includes('socket');
+      if (keys.some(socket)) {
+        keys.forEach(function (subkey) {
+          if (subkey.includes('socket')) {
+            // only get socket:type (and not further :description)
+            if (subkey.split(':').length - 1 === 1) {
+              attributesFeature.push({ [subkey]: properties[subkey] });
+            }
+          }
+        });
+      }
+      // Add charge or fee
+      if (properties.charge) {
+        attributesFeature.push({ Kosten: properties.charge });
+      } else if (properties.fee) {
+        attributesFeature.push({ Kosten: properties.fee });
+      }
+      // Add payment information
+      const payment = (subkey: any) => subkey.includes('payment');
+      if (keys.some(payment)) {
+        let paymentKeys = Array();
+        keys.forEach(function (subkey) {
+          if (subkey.includes('payment') && properties[subkey] === 'yes') {
+            paymentKeys.push(subkey.split(':')[1]);
+          }
+        });
+        if (paymentKeys.length > 1) {
+          attributesFeature.push({ Zahlungsart: paymentKeys.join(', ') });
+        }
+        if (paymentKeys.length === 1) {
+          attributesFeature.push({ Zahlungsart: paymentKeys[0] });
+        }
+      }
+      // Add opening hours
+      if (properties.opening_hours) {
+        attributesFeature.push({ Öffnungszeiten: properties.opening_hours });
+      }
+      // Add description
+      if (properties.description) {
+        attributesFeature.push({ Info: properties.description });
+      }
+      if (properties.note) {
+        attributesFeature.push({ Info: properties.note });
+      }
+      // Add attributes
+      dataBiType.features[i].properties.attributes = attributesFeature;
+      continue;
+    }
+
+    // Add attributes for bicycle_repair_station (https://wiki.openstreetmap.org/wiki/Tag:amenity%3Dbicycle_repair_station)
+    if (properties.bike_infrastructure_type === 'bicycle_repair_station') {
+      // Add pump information
+      if (properties['service:bicycle:pump']) {
+        if (properties['service:bicycle:pump'] === 'yes') {
+          attributesFeature.push({ Luftpumpe: 'Ja' });
+        }
+      }
+      // Add tools information
+      if (
+        properties['service:bicycle:tools'] &&
+        !properties['service:bicycle:chain_tool']
+      ) {
+        if (properties['service:bicycle:tools'] === 'yes') {
+          attributesFeature.push({ Werkzeug: 'Ja' });
+        }
+      }
+      if (
+        properties['service:bicycle:tools'] &&
+        properties['service:bicycle:chain_tool']
+      ) {
+        if (
+          properties['service:bicycle:tools'] === 'yes' &&
+          properties['service:bicycle:chain_tool'] === 'yes'
+        ) {
+          attributesFeature.push({ Werkzeug: 'Ja, inklusive Kettenwerkzeug' });
+        }
+        if (
+          properties['service:bicycle:tools'] === 'no' &&
+          properties['service:bicycle:chain_tool'] === 'yes'
+        ) {
+          attributesFeature.push({ Werkzeug: 'Nur Kettenwerkzeug' });
+        }
+      }
+      if (
+        !properties['service:bicycle:tools'] &&
+        properties['service:bicycle:chain_tool']
+      ) {
+        if (properties['service:bicycle:chain_tool'] === 'yes') {
+          attributesFeature.push({ Werkzeug: 'Nur Kettenwerkzeug' });
+        }
+      }
+      // Add opening hours
+      if (properties.opening_hours) {
+        attributesFeature.push({ Öffnungszeiten: properties.opening_hours });
+      }
+      // Add description
+      if (properties.description) {
+        attributesFeature.push({ Info: properties.description });
+      }
+      if (properties.note) {
+        attributesFeature.push({ Info: properties.note });
+      }
+      // Add attributes
+      dataBiType.features[i].properties.attributes = attributesFeature;
+      continue;
+    }
+    // Add attributes for tube vending machines (https://wiki.openstreetmap.org/wiki/Tag:vending%3Dbicycle_tube)
+    if (properties.bike_infrastructure_type === 'tube_vending_machine') {
+      // Add brand information
+      if (properties.brand) {
+        attributesFeature.push({ Marke: properties.brand });
+      }
+      // Add payment information
+      const payment = (subkey: any) => subkey.includes('payment');
+      if (keys.some(payment)) {
+        let paymentKeys = Array();
+        keys.forEach(function (subkey) {
+          if (subkey.includes('payment') && properties[subkey] === 'yes') {
+            paymentKeys.push(subkey.split(':')[1]);
+          }
+        });
+        if (paymentKeys.length > 1) {
+          attributesFeature.push({ Zahlungsart: paymentKeys.join(', ') });
+        }
+        if (paymentKeys.length === 1) {
+          attributesFeature.push({ Zahlungsart: paymentKeys[0] });
+        }
+      }
+      // Add attributes
+      dataBiType.features[i].properties.attributes = attributesFeature;
+      continue;
+    }
+    // Add attributes for bicycle shops (https://wiki.openstreetmap.org/wiki/Tag:shop%3Dbicycle)
+    if (properties.bike_infrastructure_type === 'bicycle_shop') {
+      // Add name information
+      if (properties.name) {
+        attributesFeature.push({ Name: properties.name });
+      }
+      // Add service information on retail, repair, diy
+      if (properties['service:bicycle:retail']) {
+        attributesFeature.push({
+          Verkauf: properties['service:bicycle:retail'],
+        });
+      } else {
+        attributesFeature.push({ Verkauf: 'Unbekannt' });
+      }
+      if (properties['service:bicycle:repair']) {
+        attributesFeature.push({
+          Reparatur: properties['service:bicycle:repair'],
+        });
+      } else {
+        attributesFeature.push({ Reparatur: 'Unbekannt' });
+      }
+      if (properties['service:bicycle:diy']) {
+        attributesFeature.push({
+          DIY: properties['service:bicycle:diy'],
+        });
+      } else {
+        attributesFeature.push({ DIY: 'Unbekannt' });
+      }
+      // Add other services
+      const service = (subkey: any) => subkey.includes('service');
+      let serviceKeys = Array();
+      if (keys.some(service)) {
+        keys.forEach(function (subkey) {
+          if (
+            subkey.includes('service') &&
+            properties[subkey] === 'yes' &&
+            !['repair', 'retail', 'diy'].includes(subkey.split(':')[2])
+          ) {
+            serviceKeys.push(subkey.split(':')[2]);
+          }
+        });
+      }
+      if (serviceKeys.length > 1) {
+        attributesFeature.push({
+          'Weiterer Service': serviceKeys.join(', '),
+        });
+      } else if (serviceKeys.length === 1) {
+        attributesFeature.push({ 'Weiterer Service': serviceKeys[0] });
+      } else if (serviceKeys.length === 0) {
+        attributesFeature.push({ 'Weiterer Service': 'Keine' });
+      }
+      // Add opening hours
+      if (properties.opening_hours) {
+        attributesFeature.push({ Öffnungszeiten: properties.opening_hours });
+      }
+      // Add attributes
+      dataBiType.features[i].properties.attributes = attributesFeature;
+      continue;
+    }
+    // Add attributes for bicycle rentals (https://wiki.openstreetmap.org/wiki/Tag:amenity%3Dbicycle_rental)
+    if (properties.bike_infrastructure_type === 'bicycle_rental') {
+      // Add name information
+      if (properties.name) {
+        attributesFeature.push({ Name: properties.name });
+      }
+      // Add bicycle type
+      if (properties.rental) {
+        attributesFeature.push({ Radtyp: properties.rental });
+      } else {
+        attributesFeature.push({ Radtyp: 'Stadtrad' });
+      }
+      // Add brand information
+      if (properties.brand) {
+        attributesFeature.push({ Marke: properties.brand });
+      }
+      // Add rental type
+      if (properties.bicycle_rental) {
+        attributesFeature.push({ Verleihtyp: properties.bicycle_rental });
+      }
+      // Add network type
+      if (properties.network) {
+        attributesFeature.push({ Verleihnetz: properties.network });
+      }
+      // Add capacity
+      if (properties.capacity) {
+        attributesFeature.push({ Kapaität: properties.capacity });
+      }
+      // Add payment information
+      const payment = (subkey: any) => subkey.includes('payment');
+      if (keys.some(payment)) {
+        let paymentKeys = Array();
+        keys.forEach(function (subkey) {
+          if (subkey.includes('payment') && properties[subkey] === 'yes') {
+            paymentKeys.push(subkey.split(':')[1]);
+          }
+        });
+        if (paymentKeys.length > 1) {
+          attributesFeature.push({ Zahlungsart: paymentKeys.join(', ') });
+        }
+        if (paymentKeys.length === 1) {
+          attributesFeature.push({ Zahlungsart: paymentKeys[0] });
+        }
+      }
+      // Add opening hours
+      if (properties.opening_hours) {
+        attributesFeature.push({ Öffnungszeiten: properties.opening_hours });
+      }
+      // Add attributes
+      dataBiType.features[i].properties.attributes = attributesFeature;
+      continue;
+    }
+    // Add attributes for cycle lane, seperated cycle lane, and mixed path (https://wiki.openstreetmap.org/wiki/Bicycle)
+    if (
+      ['cycle_lane', 'separated_cycle_lane', 'mixed_path'].includes(
+        properties.bike_infrastructure_type
+      )
+    ) {
+      // Add surface information
+      if (properties.surface) {
+        attributesFeature.push({ Oberfläche: properties.surface });
+      }
+      // Add pedestrian information
+      // if (properties.foot) {
+      //   attributesFeature.push({ Fußgänger: properties.foot });
+      // }
+      // Add attributes
+      dataBiType.features[i].properties.attributes = attributesFeature;
+      continue;
+    }
+    // Add attributes for traffic calming
+    if (properties.bike_infrastructure_type === 'traffic_calming') {
+      // Add maxspeed information (https://wiki.openstreetmap.org/wiki/Key:source:maxspeed)
+      if (properties.maxspeed) {
+        attributesFeature.push({ 'Tempo-Limit': properties.maxspeed });
+      }
+      // Add surface information
+      if (properties.surface) {
+        attributesFeature.push({ Oberfläche: properties.surface });
+      }
+      //Add road element information (https://wiki.openstreetmap.org/wiki/Key:traffic_calming)
+      if (properties.traffic_calming) {
+        attributesFeature.push({ Element: properties.traffic_calming });
+      }
+      // Add attributes
+      dataBiType.features[i].properties.attributes = attributesFeature;
+      continue;
+    }
+    // Add attributes for train stations
+    if (properties.bike_infrastructure_type === 'train_station') {
+      // Add name information
+      if (properties.name) {
+        attributesFeature.push({ Name: properties.name });
+      }
+      // Add attributes
+      dataBiType.features[i].properties.attributes = attributesFeature;
+      continue;
+    }
+    // Add attributes for cycling streets
+    if (properties.bike_infrastructure_type === 'cycling_street') {
+      // Add name information
+      if (properties.name) {
+        attributesFeature.push({ Name: properties.name });
+      }
+      // Add maxspeed information
+      if (properties.maxspeed) {
+        attributesFeature.push({ 'Tempo-Limit': properties.maxspeed });
+      }
+      // Add surface information
+      if (properties.surface) {
+        attributesFeature.push({ Oberfläche: properties.surface });
+      }
+      // Add oneway exception information
+      if (properties?.oneway === 'yes' && properties['oneway:bicycle']) {
+        if (properties['oneway_bicycle'] === 'no') {
+          attributesFeature.push({ 'Einbahnstraßen-Ausnahme': 'Ja' });
+        }
+      }
+      // Add attributes
+      dataBiType.features[i].properties.attributes = attributesFeature;
+      continue;
+    }
   }
   return dataBiType;
 }
