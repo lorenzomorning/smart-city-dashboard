@@ -48,13 +48,13 @@ export function* fetchBicycleInfrastructureDataPeriodically() {
 export function* fetchBicycleInfrastructureData(): any {
   try {
     // Biycle Infrastructure Data from OSM
-    // console.log('start API-Request BI data...');
-    // const responseBi = yield call(fetch, ENDPOINT_BI);
-    // console.log('finish API-Request BI data');
-    // const osmdataBi = yield responseBi.json();
-    // const dataBi = osmtogeojson(osmdataBi);
-    const responseBi = yield call(fetch, '/dataBI.geojson');
-    const dataBi = yield responseBi.json();
+    console.log('start API-Request BI data...');
+    const responseBi = yield call(fetch, ENDPOINT_BI);
+    console.log('finish API-Request BI data');
+    const osmdataBi = yield responseBi.json();
+    const dataBi = osmtogeojson(osmdataBi);
+    // const responseBi = yield call(fetch, '/dataBI.geojson');
+    // const dataBi = yield responseBi.json();
     console.log('Bicycle Infrastructure Data', dataBi);
     let dataBiType = addBikeInfrastructureType(dataBi);
     // check of any nd appear in the FeatureCollection
@@ -72,24 +72,24 @@ export function* fetchBicycleInfrastructureData(): any {
     dataBiType = addAttributes(dataBiType);
 
     //  Network Data from OSM
-    // console.log('start API-Request NW data...');
-    // const response_nw = yield call(fetch, ENDPOINT_NW);
-    // console.log('finish API-Request NW data');
-    // const osmdata_nw = yield response_nw.json();
-    // const data_nw = osmtogeojson(osmdata_nw);
-    const responseNw = yield call(fetch, '/dataNW.geojson');
-    const dataNw = yield responseNw.json();
+    console.log('start API-Request NW data...');
+    const responseNw = yield call(fetch, ENDPOINT_NW);
+    console.log('finish API-Request NW data');
+    const osmdataNw = yield responseNw.json();
+    const dataNw = osmtogeojson(osmdataNw);
+    // const responseNw = yield call(fetch, '/dataNW.geojson');
+    // const dataNw = yield responseNw.json();
     console.log('Network Data', dataNw);
     dataBiType = appendNWtoBI(dataNw, dataBiType);
 
     // Administrative areas from OSM
-    // console.log('start API-Request AA data...');
-    // const response_aa = yield call(fetch, ENDPOINT_AA);
-    // console.log('finish API-Request AA data');
-    // const osmdata_aa = yield response_aa.json();
-    // const data_aa = osmtogeojson(osmdata_aa);
-    const responseAa = yield call(fetch, '/dataAA.geojson');
-    const dataAa = yield responseAa.json();
+    console.log('start API-Request AA data...');
+    const responseAa = yield call(fetch, ENDPOINT_AA);
+    console.log('finish API-Request AA data');
+    const osmdataAa = yield responseAa.json();
+    const dataAa = osmtogeojson(osmdataAa);
+    // const responseAa = yield call(fetch, '/dataAA.geojson');
+    // const dataAa = yield responseAa.json();
     console.log('Administrative Areas Data', dataAa);
     dataBiType = appendAdminAreatoBI(dataAa, dataBiType);
 
