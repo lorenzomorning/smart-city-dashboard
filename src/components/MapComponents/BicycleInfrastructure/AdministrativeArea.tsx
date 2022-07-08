@@ -55,7 +55,7 @@ const AdministrativeAreas = () => {
   // add exemplary data to administrative Area 'Innenstadtring'
   const arrayLength = administrativeAreas.length;
   for (var i = 0; i < arrayLength; i++) {
-    if (administrativeAreas[i].properties.tags.name === 'Innenstadtring') {
+    if (administrativeAreas[i].properties.name === 'Innenstadtring') {
       console.log('Innenstadtring before', administrativeAreas[i]);
       administrativeAreas[i].properties.attributes = {};
       administrativeAreas[i].properties.attributes.parking_indicator = {
@@ -141,11 +141,9 @@ const AdministrativeAreas = () => {
                     mouseover: mouseOverAdminArea,
                   }}
                 >
-                  <Tooltip pane="tooltip">
-                    {feature.properties.tags.name}
-                  </Tooltip>
+                  <Tooltip pane="tooltip">{feature.properties.name}</Tooltip>
                   <Popup pane="popup" autoClose={false} closeOnClick={false}>
-                    <PopupContent>{feature.properties.tags.name}</PopupContent>
+                    <PopupContent>{feature.properties.name}</PopupContent>
                   </Popup>
                 </Polygon>
               );
