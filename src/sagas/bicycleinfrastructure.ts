@@ -28,6 +28,8 @@ import { ENDPOINT_AA } from './bicycleinfrastructureHelpers/overpassQueryAA';
 import {
   addAttributes,
   addBikeInfrastructureType,
+  appendAdminAreatoBI,
+  appendNWtoBI,
   duplicatePolygonsToPoints,
   duplicateTrafficCalming,
   splitTrafficSignalLines,
@@ -75,9 +77,10 @@ export function* fetchBicycleInfrastructureData(): any {
     // console.log('finish API-Request NW data');
     // const osmdata_nw = yield response_nw.json();
     // const data_nw = osmtogeojson(osmdata_nw);
-    const responseNW = yield call(fetch, '/dataNW.geojson');
-    const dataNW = yield responseNW.json();
-    console.log('Network Data', dataNW);
+    const responseNw = yield call(fetch, '/dataNW.geojson');
+    const dataNw = yield responseNw.json();
+    console.log('Network Data', dataNw);
+    dataBiType = appendNWtoBI(dataNw, dataBiType);
 
     // Administrative areas from OSM
     // console.log('start API-Request AA data...');
@@ -85,9 +88,10 @@ export function* fetchBicycleInfrastructureData(): any {
     // console.log('finish API-Request AA data');
     // const osmdata_aa = yield response_aa.json();
     // const data_aa = osmtogeojson(osmdata_aa);
-    const responseAA = yield call(fetch, '/dataBI.geojson');
-    const dataAA = yield responseAA.json();
-    console.log('Administrative Areas Data', dataAA);
+    const responseAa = yield call(fetch, '/dataAA.geojson');
+    const dataAa = yield responseAa.json();
+    console.log('Administrative Areas Data', dataAa);
+    dataBiType = appendAdminAreatoBI(dataAa, dataBiType);
 
     const data = dataBiType;
     yield put({

@@ -65,12 +65,12 @@ const AdministrativeAreas = () => {
 
   function onEachAdminArea(feature: any, layer: any) {
     // bind popup with dashboard information on every admin area
-    layer.bindPopup(feature.properties.tags.name, {
+    layer.bindPopup(feature.properties.name, {
       autoClose: false,
       closeOnClick: false,
     });
     // bind tooltip with the name to every admin area
-    layer.bindTooltip(feature.properties.tags.name, {
+    layer.bindTooltip(feature.properties.name, {
       pane: 'tooltip',
     });
     // organize mouse events on admin area

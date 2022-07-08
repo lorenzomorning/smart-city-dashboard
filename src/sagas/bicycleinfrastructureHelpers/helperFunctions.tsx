@@ -684,3 +684,40 @@ export function addAttributes(dataBiType: any) {
   }
   return dataBiType;
 }
+
+/**
+ * appendNWtoBI appends the network data to the BiType FeatureCollection with
+ * cycling_network as its bike_infrastructure_type
+ * @param FeatureCollection
+ * @return FeatureCollection
+ */
+export function appendNWtoBI(dataNw: any, dataBiType: any) {
+  const arrayLength = dataNw.features.length;
+  for (var i = 0; i < arrayLength; i++) {
+    let feature = dataNw.features[i];
+    feature.properties.bike_infrastructure_type = 'cycling_network';
+    dataBiType.features.push(feature);
+  }
+  return dataBiType;
+}
+
+/**
+ * appendAdminAreatoBI appends the administrative areas to the BiType
+ * FeatureCollection with admin_area as its bike_infrastructure_type
+ * @param FeatureCollection
+ * @return FeatureCollection
+ */
+export function appendAdminAreatoBI(dataAa: any, dataBiType: any) {
+  const adminAreas = dataAa.features.filter(
+    (feature: any) =>
+      feature.geometry.type === 'Polygon' ||
+      feature.geometry.type === 'MultiPolygon'
+  );
+  const arrayLength = adminAreas.length;
+  for (var i = 0; i < arrayLength; i++) {
+    let feature = adminAreas[i];
+    feature.properties.bike_infrastructure_type = 'admin_area';
+    dataBiType.features.push(feature);
+  }
+  return dataBiType;
+}
