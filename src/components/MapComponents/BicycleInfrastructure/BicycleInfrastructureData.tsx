@@ -170,7 +170,8 @@ const BicycleInfrastructure = () => {
   // Filter and style bicycle shops
   const bicycleShops = BicycleInfrastructureData.features.filter(
     (feature: any) =>
-      feature.properties.bike_infrastructure_type === 'bicycle_shop'
+      feature.properties.bike_infrastructure_type === 'bicycle_shop' &&
+      feature.geometry.type === 'Point'
   );
   function pointShop(geojsonPoint: any, latlng: any) {
     let shopIcon = L.divIcon({
