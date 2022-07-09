@@ -28,6 +28,7 @@ import { ENDPOINT_AA } from './bicycleinfrastructureHelpers/overpassQueryAA';
 import {
   addAttributes,
   addBikeInfrastructureType,
+  aggregateBiAdminArea,
   appendAdminAreatoBI,
   appendNWtoBI,
   duplicatePolygonsToPoints,
@@ -91,7 +92,7 @@ export function* fetchBicycleInfrastructureData(): any {
     const responseAa = yield call(fetch, '/dataAA.geojson');
     const dataAa = yield responseAa.json();
     console.log('Administrative Areas Data', dataAa);
-    dataBiType = appendAdminAreatoBI(dataAa, dataBiType);
+    dataBiType = aggregateBiAdminArea(dataAa, dataBiType);
 
     const data = dataBiType;
     yield put({

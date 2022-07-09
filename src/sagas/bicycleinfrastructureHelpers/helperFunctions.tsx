@@ -17,8 +17,9 @@
  */
 
 import centroid from '@turf/centroid';
-import { featureGroup } from 'leaflet';
-import { property } from 'lodash';
+import booleanWithin from '@turf/boolean-within';
+import { featureCollection } from '@turf/helpers';
+const clip = require('turf-clip');
 
 /**
  * addBikeInfrastructureType to categorize the dataBI according to each
@@ -288,7 +289,7 @@ export function addAttributes(dataBiType: any) {
         attributesFeature.push({ Kapazität: properties.capacity });
       }
       if (!properties.capacity) {
-        attributesFeature.push({ Kapazität: 'Unbekannt' });
+        attributesFeature.push({ Kapazität: 'unknown' });
       }
 
       // Parking type + weather protection + theft protection
@@ -298,36 +299,38 @@ export function addAttributes(dataBiType: any) {
           ['shed', 'lockers', 'building'].includes(properties.bicycle_parking)
         ) {
           if (!keys.includes('surveillance')) {
-            attributesFeature.push({ Diebstahlsicher: 'Ja' });
+            attributesFeature.push({ Diebstahlsicher: 'yes' });
           }
           if (!keys.includes('covered')) {
-            attributesFeature.push({ Wettergeschützt: 'Ja' });
+            attributesFeature.push({ Wettergeschützt: 'yes' });
           }
         }
         if (
           !['shed', 'lockers', 'building'].includes(properties.bicycle_parking)
         ) {
           if (!keys.includes('surveillance')) {
-            attributesFeature.push({ Diebstahlsicher: 'Unbekannt' });
+            attributesFeature.push({ Diebstahlsicher: 'unknown' });
           }
           if (!keys.includes('covered')) {
-            attributesFeature.push({ Wettergeschützt: 'Unbekannt' });
+            attributesFeature.push({ Wettergeschützt: 'unknown' });
           }
         }
+      } else {
+        attributesFeature.push({ Typ: 'unknown' });
       }
       // Theft protection
       if (properties.surveillance) {
         attributesFeature.push({ Diebstahlsicher: properties.surveillance });
       }
       if (!properties.surveillance && !properties.bicycle_parking) {
-        attributesFeature.push({ Diebstahlsicher: 'Unbekannt' });
+        attributesFeature.push({ Diebstahlsicher: 'unknown' });
       }
       // Weather protection
       if (properties.covered) {
         attributesFeature.push({ Wettergeschützt: properties.covered });
       }
       if (!properties.covered && !properties.bicycle_parking) {
-        attributesFeature.push({ Wettereschützt: 'Unbekannt' });
+        attributesFeature.push({ Wettergeschützt: 'unknown' });
       }
       // Access
       if (properties.access) {
@@ -526,7 +529,7 @@ export function addAttributes(dataBiType: any) {
           DIY: properties['service:bicycle:diy'],
         });
       } else {
-        attributesFeature.push({ DIY: 'Unbekannt' });
+        attributesFeature.push({ DIY: 'unknown' });
       }
       // Add other services
       const service = (subkey: any) => subkey.includes('service');
@@ -718,6 +721,227 @@ export function appendAdminAreatoBI(dataAa: any, dataBiType: any) {
     let feature = adminAreas[i];
     feature.properties.bike_infrastructure_type = 'admin_area';
     dataBiType.features.push(feature);
+  }
+  return dataBiType;
+}
+
+/**
+ * aggregateBiAdminArea aggregates bike infrastructure data within each
+ * administrative Area regarding parking, cycling, and services
+ * @param FeatureCollection
+ * @return FeatureCollection
+ */
+export function aggregateBiAdminArea(dataAa: any, dataBiType: any) {
+  const adminAreas = dataAa.features.filter(
+    (feature: any) =>
+      feature.geometry.type === 'Polygon' ||
+      feature.geometry.type === 'MultiPolygon'
+  );
+
+  // Loop through the adminAreas
+  const arrayLength = adminAreas.length;
+  console.log('AdminAreas', arrayLength);
+  for (var i = 0; i < arrayLength; i++) {
+    let singleAa = adminAreas[i];
+
+    // PARKING DATA
+    //--------------
+    // Select parking points within adminArea
+    adminAreas[i].properties.parking = {};
+    let parkingWithin = dataBiType.features.filter(
+      (feature: any) =>
+        feature.properties.bike_infrastructure_type === 'parking' &&
+        feature.geometry.type === 'Point' &&
+        booleanWithin(feature, singleAa)
+    );
+    // Count frequency of parking points
+    adminAreas[i].properties.parking.freqObjects = parkingWithin.length;
+
+    // Initialise sum of stands
+    let sumStands = Number();
+
+    // Initialise types of parking
+    let parkingTypes = Array();
+
+    parkingWithin.forEach((parkingPoint: any) => {
+      // Find indices for capacity
+      const containsCapacity = (attributePair: any) =>
+        Object.keys(attributePair).includes('Kapazität');
+      let indexCapacity = parkingPoint.properties.attributes.findIndex(
+        containsCapacity
+      );
+      // Convert capacity string to integer or unknown and count sum of stands
+      parkingPoint.properties.attributes[indexCapacity]['Kapazität'] = parseInt(
+        parkingPoint.properties.attributes[indexCapacity]['Kapazität']
+      );
+      if (
+        isNaN(parkingPoint.properties.attributes[indexCapacity]['Kapazität'])
+      ) {
+        parkingPoint.properties.attributes[indexCapacity]['Kapazität'] =
+          'unknown';
+      } else {
+        sumStands =
+          sumStands +
+          parkingPoint.properties.attributes[indexCapacity]['Kapazität'];
+      }
+      // Find index of parking type
+      const containsType = (attributePair: any) =>
+        Object.keys(attributePair).includes('Typ');
+      let indexType = parkingPoint.properties.attributes.findIndex(
+        containsType
+      );
+      // Append unique types to parkingTypes
+      let type = parkingPoint.properties.attributes[indexType]['Typ'];
+      if (!parkingTypes.includes(type)) {
+        parkingTypes.push(type);
+      }
+    });
+    // Initialise capacity object
+    adminAreas[i].properties.parking.capacity = {};
+
+    // Add sum of stands
+    adminAreas[i].properties.parking.capacity.sumStands = sumStands;
+
+    // Count frequency of parking points with unknown capacity
+    let freqUnknownCapacity = parkingWithin.filter((feature: any) => {
+      const containsCapacity = (attributePair: any) =>
+        Object.keys(attributePair).includes('Kapazität');
+      let indexCapacity = feature.properties.attributes.findIndex(
+        containsCapacity
+      );
+      return (
+        feature.properties.attributes[indexCapacity]['Kapazität'] === 'unknown'
+      );
+    }).length;
+    adminAreas[i].properties.parking.capacity.freqUnknown = freqUnknownCapacity;
+
+    // Count frequency of parking points with known capacity
+    let freqKnownCapacity = parkingWithin.filter((feature: any) => {
+      const containsCapacity = (attributePair: any) =>
+        Object.keys(attributePair).includes('Kapazität');
+      let indexCapacity = feature.properties.attributes.findIndex(
+        containsCapacity
+      );
+      return !isNaN(feature.properties.attributes[indexCapacity]['Kapazität']);
+    }).length;
+    adminAreas[i].properties.parking.capacity.freqKnown = freqKnownCapacity;
+
+    // Initialise type object
+    adminAreas[i].properties.parking.type = {};
+
+    // Count parking objects for each parking type
+    parkingTypes.forEach((type: any) => {
+      let freqType = parkingWithin.filter((feature: any) => {
+        const containsType = (attributePair: any) =>
+          Object.keys(attributePair).includes('Typ');
+        let indexType = feature.properties.attributes.findIndex(containsType);
+        return feature.properties.attributes[indexType]['Typ'] === type;
+      }).length;
+      adminAreas[i].properties.parking.type[type] = freqType;
+    });
+
+    // Initialise weather object
+    adminAreas[i].properties.parking.weather = {};
+
+    // Count frequency of parking points with unknown weather protection
+    let freqUnknownWeather = parkingWithin.filter((feature: any) => {
+      const containsWeather = (attributePair: any) =>
+        Object.keys(attributePair).includes('Wettergeschützt');
+      let indexWeather = feature.properties.attributes.findIndex(
+        containsWeather
+      );
+      return (
+        feature.properties.attributes[indexWeather]['Wettergeschützt'] ===
+        'unknown'
+      );
+    }).length;
+    adminAreas[i].properties.parking.weather.freqUnknown = freqUnknownWeather;
+
+    // Count frequency of parking points with weather protection
+    let freqYesWeather = parkingWithin.filter((feature: any) => {
+      const containsWeather = (attributePair: any) =>
+        Object.keys(attributePair).includes('Wettergeschützt');
+      let indexWeather = feature.properties.attributes.findIndex(
+        containsWeather
+      );
+      return (
+        feature.properties.attributes[indexWeather]['Wettergeschützt'] === 'yes'
+      );
+    }).length;
+    adminAreas[i].properties.parking.weather.freqYes = freqYesWeather;
+
+    // Count frequency of parking points without weather protection
+    let freqNoWeather = parkingWithin.filter((feature: any) => {
+      const containsWeather = (attributePair: any) =>
+        Object.keys(attributePair).includes('Wettergeschützt');
+      let indexWeather = feature.properties.attributes.findIndex(
+        containsWeather
+      );
+      return (
+        feature.properties.attributes[indexWeather]['Wettergeschützt'] === 'no'
+      );
+    }).length;
+    adminAreas[i].properties.parking.weather.freqNo = freqNoWeather;
+
+    // Initialise theftprotection object
+    adminAreas[i].properties.parking.theft = {};
+
+    // Count frequency of parking points with unknown weather protection
+    let freqUnknownTheft = parkingWithin.filter((feature: any) => {
+      const containsTheft = (attributePair: any) =>
+        Object.keys(attributePair).includes('Diebstahlsicher');
+      let indexTheft = feature.properties.attributes.findIndex(containsTheft);
+      return (
+        feature.properties.attributes[indexTheft]['Diebstahlsicher'] ===
+        'unknown'
+      );
+    }).length;
+    adminAreas[i].properties.parking.theft.freqUnknown = freqUnknownTheft;
+
+    // Count frequency of parking points with weather protection
+    let freqYesTheft = parkingWithin.filter((feature: any) => {
+      const containsTheft = (attributePair: any) =>
+        Object.keys(attributePair).includes('Diebstahlsicher');
+      let indexTheft = feature.properties.attributes.findIndex(containsTheft);
+      return (
+        feature.properties.attributes[indexTheft]['Diebstahlsicher'] === 'yes'
+      );
+    }).length;
+    adminAreas[i].properties.parking.theft.freqYes = freqYesTheft;
+
+    // Count frequency of parking points without weather protection
+    let freqNoTheft = parkingWithin.filter((feature: any) => {
+      const containsTheft = (attributePair: any) =>
+        Object.keys(attributePair).includes('Diebstahlsicher');
+      let indexTheft = feature.properties.attributes.findIndex(containsTheft);
+      return (
+        feature.properties.attributes[indexTheft]['Diebstahlsicher'] === 'no'
+      );
+    }).length;
+    adminAreas[i].properties.parking.theft.freqNo = freqNoTheft;
+
+    // CYCLING
+    //--------
+    let cyclingStreetsWithin = dataBiType.features.filter(
+      (feature: any) =>
+        feature.properties.bike_infrastructure_type === 'cycling_street' &&
+        feature.properties?.name !== 'Promenade'
+    );
+    cyclingStreetsWithin = clip(
+      singleAa,
+      featureCollection(cyclingStreetsWithin)
+    );
+    console.log(
+      'Cycling streets within',
+      singleAa.properties.name,
+      cyclingStreetsWithin
+    );
+    // Test logging
+    console.log(singleAa.properties.name, singleAa);
+
+    // Push admin_area to dataBiType
+    adminAreas[i].properties.bike_infrastructure_type = 'admin_area';
+    dataBiType.features.push(singleAa);
   }
   return dataBiType;
 }

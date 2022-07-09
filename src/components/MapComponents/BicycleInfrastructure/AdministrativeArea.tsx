@@ -127,12 +127,11 @@ const AdministrativeAreas = () => {
       {exploreMode && (
         <FeatureGroup>
           <Pane name="administrativeAreas" style={{ zIndex: 650 }}>
-            {administrativeAreas.map((feature: any) => {
-              console.log(feature.geometry.coordinates);
+            {administrativeAreas.map((feature: any, index: any) => {
               return (
                 <Polygon
                   positions={flip(feature).geometry.coordinates}
-                  key={feature.properties.id}
+                  key={index}
                   pathOptions={adminAreaOptions}
                   eventHandlers={{
                     click: clickAdminArea,
