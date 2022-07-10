@@ -18,8 +18,18 @@
 
 import centroid from '@turf/centroid';
 import booleanWithin from '@turf/boolean-within';
+import booleanIntersects from '@turf/boolean-intersects';
+import flatten from '@turf/flatten';
+import geomlength from '@turf/length';
+import combine from '@turf/combine';
+import lineSplit from '@turf/line-split';
+import pointOnFeature from '@turf/point-on-feature';
+import biffer from '@turf/buffer';
+import { featureEach } from '@turf/meta';
 import { featureCollection } from '@turf/helpers';
+import buffer from '@turf/buffer';
 const clip = require('turf-clip');
+const gjv = require('geojson-validation');
 
 /**
  * addBikeInfrastructureType to categorize the dataBI according to each
@@ -689,6 +699,40 @@ export function addAttributes(dataBiType: any) {
 }
 
 /**
+ * clipLineFeatureCollectionbyAa takes a FeatureCollection containing LineStrings or
+ * MultiLineStrings and clips it to the administrative Area
+ * @param FeatureCollectionLine, AdministrativeArea
+ * @param FeatureCollectionClipped
+ */
+function clipLineFeatureCollectionbyAa(
+  FeatureCollectionLine: any,
+  AdministrativeArea: any
+) {
+  let FeatureCollectionClipped = Array();
+  featureEach(FeatureCollectionLine, (line: any) => {
+    // Flatten MultiLineStrings first
+    let flattenLines = flatten(line);
+    featureEach(flattenLines, (singleLine: any) => {
+      // Check if the line feature is fully within the clip area. If it is, add it to linesArray.
+      if (booleanWithin(singleLine, AdministrativeArea)) {
+        FeatureCollectionClipped.push(singleLine);
+      } else {
+        // If the feature is not fully within the clip area, split the line by the clip area
+        let splitResults = lineSplit(singleLine, AdministrativeArea);
+        // Take the resulting features from the split, calculate a point on surface, and check if the point is within the clip area. If it is, add the line segment to linesArray.
+        featureEach(splitResults, (splitResult) => {
+          let pof = pointOnFeature(splitResult);
+          if (booleanWithin(pof, AdministrativeArea)) {
+            FeatureCollectionClipped.push(splitResult);
+          }
+        });
+      }
+    });
+  });
+  return featureCollection(FeatureCollectionClipped);
+}
+
+/**
  * appendNWtoBI appends the network data to the BiType FeatureCollection with
  * cycling_network as its bike_infrastructure_type
  * @param FeatureCollection
@@ -780,8 +824,7 @@ export function aggregateBiAdminArea(dataAa: any, dataBiType: any) {
         parkingPoint.properties.attributes[indexCapacity]['Kapazität'] =
           'unknown';
       } else {
-        sumStands =
-          sumStands +
+        sumStands +=
           parkingPoint.properties.attributes[indexCapacity]['Kapazität'];
       }
       // Find index of parking type
@@ -922,21 +965,48 @@ export function aggregateBiAdminArea(dataAa: any, dataBiType: any) {
 
     // CYCLING
     //--------
-    let cyclingStreetsWithin = dataBiType.features.filter(
+    adminAreas[i].properties.cycling = {};
+    // Find all requested cylcingLines
+    // let linesCycling = dataBiType.features.filter(
+    //   (feature: any) =>
+    //     (feature.properties.bike_infrastructure_type === 'cycling_street' ||
+    //       feature.properties.bike_infrastructure_type === 'traffic_calming' ||
+    //       feature.properties.bike_infrastructure_type === 'cycling_network' ||
+    //       feature.properties.bike_infrastructure_type === 'cycle_lane' ||
+    //       feature.properties.bike_infrastructure_type ===
+    //         'separated_cycle_lane') &&
+    //     (feature.geometry.type === 'LineString' ||
+    //       feature.geometry.type === 'MultiLineString')
+    // );
+    // linesCycling = featureCollection(linesCycling);
+    // console.log('LinesCycling', linesCycling);
+
+    // Clip all cylcing lines to the Administrative Area
+    // let linesCyclingWithin = clipLineFeatureCollectionbyAa(
+    //   linesCycling,
+    //   singleAa
+    // );
+    // console.log('LinesWithin', linesCyclingWithin);
+
+    // Filter cycling streets
+    let cyclingStreets = dataBiType.features.filter(
       (feature: any) =>
         feature.properties.bike_infrastructure_type === 'cycling_street' &&
         feature.properties?.name !== 'Promenade'
     );
-    cyclingStreetsWithin = clip(
-      singleAa,
-      featureCollection(cyclingStreetsWithin)
+    let cyclingStreetsWithin = clipLineFeatureCollectionbyAa(
+      featureCollection(cyclingStreets),
+      singleAa
     );
-    console.log(
-      'Cycling streets within',
-      singleAa.properties.name,
-      cyclingStreetsWithin
-    );
-    // Test logging
+    console.log(cyclingStreetsWithin);
+
+    // // adminAreas[i].properties.cycling.cyclingstreets = {};
+    // // // Calculate total length of cycling streets
+    // // adminAreas[i].properties.cycling.cyclingstreets.lengthTotal = Math.round(
+    // //   geomlength(cyclingStreetsWithin, { units: 'meters' })
+    // // );
+
+    // // Test logging
     console.log(singleAa.properties.name, singleAa);
 
     // Push admin_area to dataBiType

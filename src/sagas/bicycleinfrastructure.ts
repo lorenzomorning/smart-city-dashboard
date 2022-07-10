@@ -92,7 +92,9 @@ export function* fetchBicycleInfrastructureData(): any {
     const responseAa = yield call(fetch, '/dataAA.geojson');
     const dataAa = yield responseAa.json();
     console.log('Administrative Areas Data', dataAa);
+    console.log('Calculate parking, cycling, service data for admin areas...');
     dataBiType = aggregateBiAdminArea(dataAa, dataBiType);
+    console.log('Calculaion completed!');
 
     const data = dataBiType;
     yield put({
