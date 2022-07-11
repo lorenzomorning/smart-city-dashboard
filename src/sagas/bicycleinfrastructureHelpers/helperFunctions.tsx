@@ -24,7 +24,6 @@ import geomlength from '@turf/length';
 import combine from '@turf/combine';
 import lineSplit from '@turf/line-split';
 import pointOnFeature from '@turf/point-on-feature';
-import biffer from '@turf/buffer';
 import { featureEach } from '@turf/meta';
 import { featureCollection } from '@turf/helpers';
 import buffer from '@turf/buffer';
@@ -998,13 +997,62 @@ export function aggregateBiAdminArea(dataAa: any, dataBiType: any) {
       featureCollection(cyclingStreets),
       singleAa
     );
-    console.log(cyclingStreetsWithin);
+    console.log('Cycling streets within', cyclingStreetsWithin);
 
     // // adminAreas[i].properties.cycling.cyclingstreets = {};
     // // // Calculate total length of cycling streets
     // // adminAreas[i].properties.cycling.cyclingstreets.lengthTotal = Math.round(
     // //   geomlength(cyclingStreetsWithin, { units: 'meters' })
     // // );
+
+    // Filter cycling separated lanes
+    let sepLanes = dataBiType.features.filter(
+      (feature: any) =>
+        feature.properties.bike_infrastructure_type ===
+          'separated_cycle_lane' &&
+        ['LineString', 'MultiLineString'].includes(feature.geometry.type)
+    );
+    let sepLanesWithin = clipLineFeatureCollectionbyAa(
+      featureCollection(sepLanes),
+      singleAa
+    );
+    console.log('Separated Lanes within', sepLanesWithin);
+
+    // Filter cycling lanes
+    let lanes = dataBiType.features.filter(
+      (feature: any) =>
+        feature.properties.bike_infrastructure_type === 'cycle_lane' &&
+        ['LineString', 'MultiLineString'].includes(feature.geometry.type)
+    );
+    let lanesWithin = clipLineFeatureCollectionbyAa(
+      featureCollection(lanes),
+      singleAa
+    );
+    console.log('Lanes within', lanesWithin);
+
+    // Filter network lanes
+    let network = dataBiType.features.filter(
+      (feature: any) =>
+        feature.properties.bike_infrastructure_type === 'cycling_network' &&
+        ['LineString', 'MultiLineString'].includes(feature.geometry.type)
+    );
+    let networkWithin = clipLineFeatureCollectionbyAa(
+      featureCollection(network),
+      singleAa
+    );
+    console.log('Network within', networkWithin);
+
+    // Filter traffic calming streets
+    let trafficCalming = dataBiType.features.filter(
+      (feature: any) =>
+        feature.properties.bike_infrastructure_type === 'traffic_calming' &&
+        ['LineString', 'MultiLineString'].includes(feature.geometry.type)
+    );
+    let trafficCalmingWithin = clipLineFeatureCollectionbyAa(
+      featureCollection(trafficCalming),
+      singleAa
+    );
+    console.log('Traffic Calming within', trafficCalmingWithin);
 
     // // Test logging
     console.log(singleAa.properties.name, singleAa);
