@@ -22,6 +22,7 @@ import booleanIntersects from '@turf/boolean-intersects';
 import flatten from '@turf/flatten';
 import geomlength from '@turf/length';
 import combine from '@turf/combine';
+import dissolve from '@turf/dissolve';
 import lineSplit from '@turf/line-split';
 import pointOnFeature from '@turf/point-on-feature';
 import { featureEach } from '@turf/meta';
@@ -698,6 +699,22 @@ export function addAttributes(dataBiType: any) {
 }
 
 /**
+ * appendNWtoBI appends the network data to the BiType FeatureCollection with
+ * cycling_network as its bike_infrastructure_type
+ * @param FeatureCollection
+ * @return FeatureCollection
+ */
+export function appendNWtoBI(dataNw: any, dataBiType: any) {
+  const arrayLength = dataNw.features.length;
+  for (var i = 0; i < arrayLength; i++) {
+    let feature = dataNw.features[i];
+    feature.properties.bike_infrastructure_type = 'cycling_network';
+    dataBiType.features.push(feature);
+  }
+  return dataBiType;
+}
+
+/**
  * clipLineFeatureCollectionbyAa takes a FeatureCollection containing LineStrings or
  * MultiLineStrings and clips it to the administrative Area
  * @param FeatureCollectionLine, AdministrativeArea
@@ -729,22 +746,6 @@ function clipLineFeatureCollectionbyAa(
     });
   });
   return featureCollection(FeatureCollectionClipped);
-}
-
-/**
- * appendNWtoBI appends the network data to the BiType FeatureCollection with
- * cycling_network as its bike_infrastructure_type
- * @param FeatureCollection
- * @return FeatureCollection
- */
-export function appendNWtoBI(dataNw: any, dataBiType: any) {
-  const arrayLength = dataNw.features.length;
-  for (var i = 0; i < arrayLength; i++) {
-    let feature = dataNw.features[i];
-    feature.properties.bike_infrastructure_type = 'cycling_network';
-    dataBiType.features.push(feature);
-  }
-  return dataBiType;
 }
 
 /**
@@ -1006,6 +1007,7 @@ export function aggregateBiAdminArea(dataAa: any, dataBiType: any) {
     // // );
 
     // Filter cycling separated lanes
+    /*
     let sepLanes = dataBiType.features.filter(
       (feature: any) =>
         feature.properties.bike_infrastructure_type ===
@@ -1017,8 +1019,10 @@ export function aggregateBiAdminArea(dataAa: any, dataBiType: any) {
       singleAa
     );
     console.log('Separated Lanes within', sepLanesWithin);
+    */
 
     // Filter cycling lanes
+    /*
     let lanes = dataBiType.features.filter(
       (feature: any) =>
         feature.properties.bike_infrastructure_type === 'cycle_lane' &&
@@ -1029,8 +1033,10 @@ export function aggregateBiAdminArea(dataAa: any, dataBiType: any) {
       singleAa
     );
     console.log('Lanes within', lanesWithin);
+    */
 
     // Filter network lanes
+    adminAreas[i].properties.cycling.network = {};
     let network = dataBiType.features.filter(
       (feature: any) =>
         feature.properties.bike_infrastructure_type === 'cycling_network' &&
@@ -1040,9 +1046,12 @@ export function aggregateBiAdminArea(dataAa: any, dataBiType: any) {
       featureCollection(network),
       singleAa
     );
+    let networkLength = Math.round(geomlength(networkWithin) * 100) / 100;
+    adminAreas[i].properties.cycling.network.lengthKM = networkLength;
     console.log('Network within', networkWithin);
 
     // Filter traffic calming streets
+    /*
     let trafficCalming = dataBiType.features.filter(
       (feature: any) =>
         feature.properties.bike_infrastructure_type === 'traffic_calming' &&
@@ -1053,6 +1062,7 @@ export function aggregateBiAdminArea(dataAa: any, dataBiType: any) {
       singleAa
     );
     console.log('Traffic Calming within', trafficCalmingWithin);
+    */
 
     // // Test logging
     console.log(singleAa.properties.name, singleAa);
@@ -1060,6 +1070,10 @@ export function aggregateBiAdminArea(dataAa: any, dataBiType: any) {
     // Push admin_area to dataBiType
     adminAreas[i].properties.bike_infrastructure_type = 'admin_area';
     dataBiType.features.push(singleAa);
+
+    // SERVICE FACILITIES
+    //-------------------
+    // 700 meters
   }
   return dataBiType;
 }
