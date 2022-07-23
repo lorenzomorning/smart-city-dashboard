@@ -27,6 +27,9 @@ import { CyclingIcon, ShopIcon, ParkingIcon } from '../../Icons';
 
 interface IPopupAdminAreaProps {
   name: string;
+  contentParking?: JSX.Element;
+  contentCycling?: JSX.Element;
+  contentService?: JSX.Element;
 }
 
 const PopupWrapper = styled.div`
@@ -50,9 +53,10 @@ const HeadingWrapper = styled.div`
 `;
 
 const IconWrapper = styled.div`
+  margin-right: 1rem;
   > svg {
-    width: 2rem;
-    height: 2rem;
+    width: 3rem;
+    height: 3rem;
   }
 `;
 
@@ -105,9 +109,9 @@ const PopupAdminArea = (props: IPopupAdminAreaProps) => {
             <IconWrapper>
               <ParkingIcon fill="#203864" />
             </IconWrapper>
-            {<p className="is-size-5">{'arken in ' + props.name}</p>}
+            {<p className="is-size-5">{'arken ' + props.name}</p>}
           </HeadingWrapper>
-          <ContentWrapper></ContentWrapper>
+          <ContentWrapper>{props.contentParking}</ContentWrapper>
           <FooterWrapper>
             <HighlightedFooterButton bold={showParking}>
               Parken
@@ -137,9 +141,9 @@ const PopupAdminArea = (props: IPopupAdminAreaProps) => {
             <IconWrapper>
               <CyclingIcon />
             </IconWrapper>
-            {<p className="is-size-5">{'Radwege in ' + props.name}</p>}
+            {<p className="is-size-5">{'Radwege ' + props.name}</p>}
           </HeadingWrapper>
-          <ContentWrapper></ContentWrapper>
+          <ContentWrapper>{props.contentCycling}</ContentWrapper>
           <FooterWrapper>
             <FooterButton
               onClick={() => {
@@ -169,9 +173,9 @@ const PopupAdminArea = (props: IPopupAdminAreaProps) => {
             <IconWrapper>
               <ShopIcon fill="#385723" />
             </IconWrapper>
-            {<p className="is-size-5">{'Läden in ' + props.name}</p>}
+            {<p className="is-size-5">{'Läden ' + props.name}</p>}
           </HeadingWrapper>
-          <ContentWrapper></ContentWrapper>
+          <ContentWrapper>{props.contentService}</ContentWrapper>
           <FooterWrapper>
             <FooterButton
               onClick={() => {

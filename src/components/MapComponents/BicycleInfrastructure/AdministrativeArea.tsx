@@ -17,13 +17,17 @@
  */
 
 //import L from 'leaflet';
-import React, { useState } from 'react';
+import React, { lazy, Suspense, useState } from 'react';
+import Skeleton from 'react-loading-skeleton';
 import { useSelector, RootStateOrAny } from 'react-redux';
 import { FeatureGroup, Pane, Polygon, Popup, Tooltip } from 'react-leaflet';
 import flip from '@turf/flip';
-import { PopupContent } from '../styles';
+import { TilesWrapper } from '../../styles';
 import styled from 'styled-components';
 import PopupAdminArea from './PopupPages';
+import MeasurementTilePopup from '../../MeasurementTilePopup';
+
+const MeasurementTile = lazy(() => import('../../MeasurementTilePopup'));
 
 const StyledPopup = styled(Popup)`
   min-width: 350px;
@@ -115,6 +119,37 @@ const AdministrativeAreas = () => {
                   >
                     <PopupAdminArea
                       name={feature.properties.name}
+                      contentService={
+                        <TilesWrapper>
+                          <Suspense
+                            fallback={<Skeleton width="100%" height="100%" />}
+                          >
+                            <MeasurementTilePopup
+                              header="Innerhalb"
+                              value={feature.properties.service.shopsWithin}
+                              decimals={0}
+                            ></MeasurementTilePopup>
+                          </Suspense>
+                          <Suspense
+                            fallback={<Skeleton width="100%" height="100%" />}
+                          >
+                            <MeasurementTilePopup
+                              header="In der Nähe"
+                              value={feature.properties.service.shopsNearby}
+                              decimals={0}
+                            ></MeasurementTilePopup>
+                          </Suspense>
+                          <Suspense
+                            fallback={<Skeleton width="100%" height="100%" />}
+                          >
+                            <MeasurementTilePopup
+                              header="Abdeckung"
+                              value={feature.properties.service.coverage}
+                              decimals={3}
+                            ></MeasurementTilePopup>
+                          </Suspense>
+                        </TilesWrapper>
+                      }
                     ></PopupAdminArea>
                   </StyledPopup>
                 </Polygon>

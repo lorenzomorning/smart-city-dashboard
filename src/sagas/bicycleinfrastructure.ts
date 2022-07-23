@@ -93,8 +93,8 @@ export function* fetchBicycleInfrastructureData(): any {
     const dataAa = yield responseAa.json();
     console.log('Administrative Areas Data', dataAa);
     console.log('Calculate parking, cycling, service data for admin areas...');
-    // dataBiType = aggregateBiAdminArea(dataAa, dataBiType);
-    dataBiType = appendAdminAreatoBI(dataAa, dataBiType);
+    dataBiType = aggregateBiAdminArea(dataAa, dataBiType);
+    // dataBiType = appendAdminAreatoBI(dataAa, dataBiType);
     console.log('Calculation completed!');
 
     const data = dataBiType;
