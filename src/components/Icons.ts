@@ -41,8 +41,10 @@ import { ReactComponent as TubeIcon } from '../resources/pictos/tubevending.svg'
 import { ReactComponent as SignalIcon } from '../resources/pictos/trafficsignal.svg';
 import { ReactComponent as WayfindingIcon } from '../resources/pictos/wayfinding.svg';
 import { ReactComponent as TrainstationIcon } from '../resources/pictos/trainstation.svg';
+import { ReactComponent as CyclingIcon } from '../resources/pictos/cycling.svg';
 
 export {
+  CyclingIcon,
   TrainstationIcon,
   WayfindingIcon,
   SignalIcon,

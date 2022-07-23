@@ -19,16 +19,19 @@
 //import L from 'leaflet';
 import React, { useState } from 'react';
 import { useSelector, RootStateOrAny } from 'react-redux';
-import {
-  FeatureGroup,
-  GeoJSON,
-  Pane,
-  Polygon,
-  Popup,
-  Tooltip,
-} from 'react-leaflet';
+import { FeatureGroup, Pane, Polygon, Popup, Tooltip } from 'react-leaflet';
 import flip from '@turf/flip';
 import { PopupContent } from '../styles';
+import styled from 'styled-components';
+import PopupAdminArea from './PopupPages';
+
+const StyledPopup = styled(Popup)`
+  min-width: 350px;
+  padding: 0rem;
+  margin: 0rem;
+`;
+
+const ChartWrapper = styled.div``;
 
 const AdministrativeAreas = () => {
   // retrieve data from the store
@@ -49,44 +52,8 @@ const AdministrativeAreas = () => {
     weight: 2,
     opacity: 1,
     fillColor: '#4d514d',
-    fillOpacity: 0.8,
+    fillOpacity: 0.5,
   };
-
-  // add exemplary data to administrative Area 'Innenstadtring'
-  const arrayLength = administrativeAreas.length;
-  for (var i = 0; i < arrayLength; i++) {
-    if (administrativeAreas[i].properties.name === 'Innenstadtring') {
-      console.log('Innenstadtring before', administrativeAreas[i]);
-      administrativeAreas[i].properties.attributes = {};
-      administrativeAreas[i].properties.attributes.parking_indicator = {
-        facilities: 20,
-        capacity: {
-          sumStands: 40,
-          unknownFacilities: 15,
-        },
-        weatherProtection: {
-          yesFacilities: 2,
-          noFacilities: 10,
-          unknownFacilities: 8,
-        },
-        theftProtection: {
-          yesFacilities: 2,
-          noFacilities: 10,
-          unknownFacilities: 8,
-        },
-      };
-      administrativeAreas[i].properties.attributes.lane_indicator = {
-        lenghtCyclingStreet: 2412,
-      };
-      administrativeAreas[i].properties.attributes.service_indicator = {
-        shops: 5,
-        diyStations: 0,
-        rentals: 1,
-        tubeVendingMachine: 2,
-      };
-      console.log('Innenstadtring after', administrativeAreas[i]);
-    }
-  }
 
   // Create event functions
   function clickAdminArea(e: any) {
@@ -107,7 +74,7 @@ const AdministrativeAreas = () => {
       weight: 2,
       opacity: 1,
       fillColor: '#4d514d',
-      fillOpacity: 0.8,
+      fillOpacity: 0.5,
     });
   }
   function mouseMoveAdminArea(e: any) {
@@ -141,9 +108,15 @@ const AdministrativeAreas = () => {
                   }}
                 >
                   <Tooltip pane="tooltip">{feature.properties.name}</Tooltip>
-                  <Popup pane="popup" autoClose={false} closeOnClick={false}>
-                    <PopupContent>{feature.properties.name}</PopupContent>
-                  </Popup>
+                  <StyledPopup
+                    pane="popup"
+                    autoClose={false}
+                    closeOnClick={false}
+                  >
+                    <PopupAdminArea
+                      name={feature.properties.name}
+                    ></PopupAdminArea>
+                  </StyledPopup>
                 </Polygon>
               );
             })}

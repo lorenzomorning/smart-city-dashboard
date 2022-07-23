@@ -118,9 +118,9 @@ const BicycleInfrastructure = () => {
       feature.properties.bike_infrastructure_type === 'cycle_lane'
   );
   let cycleLanesPathOptions = {
-    color: '#ff791c',
+    color: '#cc0000',
     weight: 2,
-    opacity: 1,
+    opacity: 0.8,
     dashArray: '6 8',
   };
 
