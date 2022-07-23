@@ -16,20 +16,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import centroid from '@turf/centroid';
-import booleanWithin from '@turf/boolean-within';
-import booleanIntersects from '@turf/boolean-intersects';
+import intersect from '@turf/intersect';
+import difference from '@turf/difference';
+import geounion from '@turf/union';
+import buffer from '@turf/buffer';
 import flatten from '@turf/flatten';
-import geomlength from '@turf/length';
-import combine from '@turf/combine';
-import dissolve from '@turf/dissolve';
+import centroid from '@turf/centroid';
 import lineSplit from '@turf/line-split';
 import pointOnFeature from '@turf/point-on-feature';
+import booleanWithin from '@turf/boolean-within';
+import geoarea from '@turf/area';
+import geomlength from '@turf/length';
+
 import { featureEach } from '@turf/meta';
 import { featureCollection } from '@turf/helpers';
-import buffer from '@turf/buffer';
-const clip = require('turf-clip');
-const gjv = require('geojson-validation');
 
 /**
  * addBikeInfrastructureType to categorize the dataBI according to each
@@ -715,37 +715,63 @@ export function appendNWtoBI(dataNw: any, dataBiType: any) {
 }
 
 /**
- * clipLineFeatureCollectionbyAa takes a FeatureCollection containing LineStrings or
- * MultiLineStrings and clips it to the administrative Area
- * @param FeatureCollectionLine, AdministrativeArea
- * @param FeatureCollectionClipped
+ * clipLineFeatureCollectionbyPolygon takes a FeatureCollection containing LineStrings or
+ * MultiLineStrings and clips it to a single Plygon feature
+ * @param featureCollectionLine
+ * @param polygonFeature
+ * @return featureCollectionClipped
  */
-function clipLineFeatureCollectionbyAa(
-  FeatureCollectionLine: any,
-  AdministrativeArea: any
+function clipLineFeatureCollectionbyPolygon(
+  featureCollectionLine: any,
+  polygonFeature: any
 ) {
-  let FeatureCollectionClipped = Array();
-  featureEach(FeatureCollectionLine, (line: any) => {
+  let featureCollectionClipped = Array();
+  featureEach(featureCollectionLine, (line: any) => {
     // Flatten MultiLineStrings first
     let flattenLines = flatten(line);
     featureEach(flattenLines, (singleLine: any) => {
       // Check if the line feature is fully within the clip area. If it is, add it to linesArray.
-      if (booleanWithin(singleLine, AdministrativeArea)) {
-        FeatureCollectionClipped.push(singleLine);
+      if (booleanWithin(singleLine, polygonFeature)) {
+        featureCollectionClipped.push(singleLine);
       } else {
         // If the feature is not fully within the clip area, split the line by the clip area
-        let splitResults = lineSplit(singleLine, AdministrativeArea);
+        let splitResults = lineSplit(singleLine, polygonFeature);
         // Take the resulting features from the split, calculate a point on surface, and check if the point is within the clip area. If it is, add the line segment to linesArray.
         featureEach(splitResults, (splitResult) => {
           let pof = pointOnFeature(splitResult);
-          if (booleanWithin(pof, AdministrativeArea)) {
-            FeatureCollectionClipped.push(splitResult);
+          if (booleanWithin(pof, polygonFeature)) {
+            featureCollectionClipped.push(splitResult);
           }
         });
       }
     });
   });
-  return featureCollection(FeatureCollectionClipped);
+  return featureCollection(featureCollectionClipped);
+}
+
+/**
+ * unionMultipleFeatures takes a FeatureCollection containing (Multi)LineStrings or
+ * (Multi)Polygons and computes the union of these features
+ * @param featureCollectionSep
+ */
+function unionMultipleFeatures(featureCollectionSep: any) {
+  let arrayLength = featureCollectionSep.features.length;
+  if (arrayLength === 0) {
+    return null;
+  } else {
+    let featuresUnion = featureCollectionSep.features[0];
+    if (arrayLength > 1) {
+      featureEach(
+        featureCollectionSep,
+        function (currentFeature: any, index: any) {
+          if (index > 0) {
+            featuresUnion = geounion(featuresUnion, currentFeature);
+          }
+        }
+      );
+    }
+    return featuresUnion;
+  }
 }
 
 /**
@@ -929,7 +955,7 @@ export function aggregateBiAdminArea(dataAa: any, dataBiType: any) {
     // Initialise theftprotection object
     adminAreas[i].properties.parking.theft = {};
 
-    // Count frequency of parking points with unknown weather protection
+    // Count frequency of parking points with unknown theft protection
     let freqUnknownTheft = parkingWithin.filter((feature: any) => {
       const containsTheft = (attributePair: any) =>
         Object.keys(attributePair).includes('Diebstahlsicher');
@@ -941,7 +967,7 @@ export function aggregateBiAdminArea(dataAa: any, dataBiType: any) {
     }).length;
     adminAreas[i].properties.parking.theft.freqUnknown = freqUnknownTheft;
 
-    // Count frequency of parking points with weather protection
+    // Count frequency of parking points with theft protection
     let freqYesTheft = parkingWithin.filter((feature: any) => {
       const containsTheft = (attributePair: any) =>
         Object.keys(attributePair).includes('Diebstahlsicher');
@@ -952,7 +978,7 @@ export function aggregateBiAdminArea(dataAa: any, dataBiType: any) {
     }).length;
     adminAreas[i].properties.parking.theft.freqYes = freqYesTheft;
 
-    // Count frequency of parking points without weather protection
+    // Count frequency of parking points without theft protection
     let freqNoTheft = parkingWithin.filter((feature: any) => {
       const containsTheft = (attributePair: any) =>
         Object.keys(attributePair).includes('Diebstahlsicher');
@@ -988,52 +1014,24 @@ export function aggregateBiAdminArea(dataAa: any, dataBiType: any) {
     // );
     // console.log('LinesWithin', linesCyclingWithin);
 
-    // Filter cycling streets
+    // Cycling streets
+    adminAreas[i].properties.cycling.cyclingstreets = {};
     let cyclingStreets = dataBiType.features.filter(
       (feature: any) =>
         feature.properties.bike_infrastructure_type === 'cycling_street' &&
         feature.properties?.name !== 'Promenade'
     );
-    let cyclingStreetsWithin = clipLineFeatureCollectionbyAa(
+    let cyclingStreetsWithin = clipLineFeatureCollectionbyPolygon(
       featureCollection(cyclingStreets),
       singleAa
     );
     console.log('Cycling streets within', cyclingStreetsWithin);
 
-    // // adminAreas[i].properties.cycling.cyclingstreets = {};
-    // // // Calculate total length of cycling streets
-    // // adminAreas[i].properties.cycling.cyclingstreets.lengthTotal = Math.round(
-    // //   geomlength(cyclingStreetsWithin, { units: 'meters' })
-    // // );
-
-    // Filter cycling separated lanes
-    /*
-    let sepLanes = dataBiType.features.filter(
-      (feature: any) =>
-        feature.properties.bike_infrastructure_type ===
-          'separated_cycle_lane' &&
-        ['LineString', 'MultiLineString'].includes(feature.geometry.type)
-    );
-    let sepLanesWithin = clipLineFeatureCollectionbyAa(
-      featureCollection(sepLanes),
-      singleAa
-    );
-    console.log('Separated Lanes within', sepLanesWithin);
-    */
-
-    // Filter cycling lanes
-    /*
-    let lanes = dataBiType.features.filter(
-      (feature: any) =>
-        feature.properties.bike_infrastructure_type === 'cycle_lane' &&
-        ['LineString', 'MultiLineString'].includes(feature.geometry.type)
-    );
-    let lanesWithin = clipLineFeatureCollectionbyAa(
-      featureCollection(lanes),
-      singleAa
-    );
-    console.log('Lanes within', lanesWithin);
-    */
+    let cyclingStreetsLength =
+      Math.round(geomlength(cyclingStreetsWithin) * 100) / 100;
+    adminAreas[
+      i
+    ].properties.cycling.cyclingstreets.lengthKM = cyclingStreetsLength;
 
     // Filter network lanes
     adminAreas[i].properties.cycling.network = {};
@@ -1042,38 +1040,137 @@ export function aggregateBiAdminArea(dataAa: any, dataBiType: any) {
         feature.properties.bike_infrastructure_type === 'cycling_network' &&
         ['LineString', 'MultiLineString'].includes(feature.geometry.type)
     );
-    let networkWithin = clipLineFeatureCollectionbyAa(
+    let networkWithin = clipLineFeatureCollectionbyPolygon(
       featureCollection(network),
       singleAa
     );
     let networkLength = Math.round(geomlength(networkWithin) * 100) / 100;
     adminAreas[i].properties.cycling.network.lengthKM = networkLength;
-    console.log('Network within', networkWithin);
 
-    // Filter traffic calming streets
-    /*
-    let trafficCalming = dataBiType.features.filter(
+    let networkBuffer = buffer(networkWithin, 20, { units: 'meters' });
+
+    let networkUnion = unionMultipleFeatures(networkBuffer);
+    console.log('Network Union Within', networkUnion);
+
+    // Cycling Streets intersection with Network
+    // let cyclingStreetsNetwork = clipLineFeatureCollectionbyPolygon(
+    //   cyclingStreetsWithin,
+    //   networkUnion
+    // );
+    // let networkCyclingStreetsLength =
+    //   Math.round(geomlength(cyclingStreetsNetwork) * 100) / 100;
+    // adminAreas[
+    //   i
+    // ].properties.cycling.network.lengthKMcyclingStreets = networkCyclingStreetsLength;
+    // console.log('Cycling Streets Network', cyclingStreetsNetwork);
+
+    // Sep Lanes intersection with Network
+    // let sepLanes = dataBiType.features.filter(
+    //   (feature: any) =>
+    //     feature.properties.bike_infrastructure_type ===
+    //       'separated_cycle_lane' &&
+    //     ['LineString', 'MultiLineString'].includes(feature.geometry.type)
+    // );
+
+    // Problem here is that separated lanes are sometimes duplicated on both sides of the roads
+
+    // let sepLanesNetwork = clipLineFeatureCollectionbyPolygon(
+    //   featureCollection(sepLanes),
+    //   networkUnion
+    // );
+    // let networkSepLanesLength =
+    //   Math.round(geomlength(sepLanesNetwork) * 100) / 100;
+    // adminAreas[
+    //   i
+    // ].properties.cycling.network.lengthKMsepLanes = networkSepLanesLength;
+    // console.log('Separated Lanes Network', sepLanesNetwork);
+
+    // Filter cycling lanes
+    // let lanes = dataBiType.features.filter(
+    //   (feature: any) =>
+    //     feature.properties.bike_infrastructure_type === 'cycle_lane' &&
+    //     ['LineString', 'MultiLineString'].includes(feature.geometry.type)
+    // );
+
+    // Problem here is that lanes are sometimes duplicated on both sides of the roads
+
+    // let lanesNetwork = clipLineFeatureCollectionbyPolygon(
+    //   featureCollection(lanes),
+    //   networkUnion
+    // );
+    // let networkLanesLength = Math.round(geomlength(lanesNetwork) * 100) / 100;
+    // adminAreas[i].properties.cycling.network.lengthKMlanes = networkLanesLength;
+    // console.log('Lanes Network', lanesNetwork);
+
+    // Traffic Calming intersection with Network
+    // let trafficCalming = dataBiType.features.filter(
+    //   (feature: any) =>
+    //     feature.properties.bike_infrastructure_type === 'traffic_calming' &&
+    //     ['LineString', 'MultiLineString'].includes(feature.geometry.type)
+    // );
+    // let trafficCalmingNetwork = clipLineFeatureCollectionbyPolygon(
+    //   featureCollection(trafficCalming),
+    //   networkUnion
+    // );
+    // let networkTrafficCalmingLength =
+    //   Math.round(geomlength(trafficCalmingNetwork) * 100) / 100;
+    // adminAreas[
+    //   i
+    // ].properties.cycling.network.lengthKMtrafficCalming = networkTrafficCalmingLength;
+    // console.log('Traffic Calming Network', trafficCalmingNetwork);
+
+    // SERVICE FACILITIES
+    //-------------------
+    // Get shops within administrative area
+    adminAreas[i].properties.service = {};
+    let shopsWithin = dataBiType.features.filter(
       (feature: any) =>
-        feature.properties.bike_infrastructure_type === 'traffic_calming' &&
-        ['LineString', 'MultiLineString'].includes(feature.geometry.type)
+        feature.properties.bike_infrastructure_type === 'bicycle_shop' &&
+        feature.geometry.type === 'Point' &&
+        booleanWithin(feature, singleAa)
     );
-    let trafficCalmingWithin = clipLineFeatureCollectionbyAa(
-      featureCollection(trafficCalming),
-      singleAa
-    );
-    console.log('Traffic Calming within', trafficCalmingWithin);
-    */
+    adminAreas[i].properties.service.shopsWithin = shopsWithin.length;
 
-    // // Test logging
+    // Get shops nearby administrative area
+    let singleAaBuffer = buffer(singleAa, 700, { units: 'meters' });
+    let singleAaDifference: any = difference(singleAaBuffer, singleAa);
+    let shopsNearby = dataBiType.features.filter(
+      (feature: any) =>
+        feature.properties.bike_infrastructure_type === 'bicycle_shop' &&
+        feature.geometry.type === 'Point' &&
+        booleanWithin(feature, singleAaDifference)
+    );
+    adminAreas[i].properties.service.shopsNearby = shopsNearby.length;
+
+    // Get shops coverage
+    let shopsAa = featureCollection(shopsWithin.concat(shopsNearby));
+    console.log('Shops within and nearby', shopsAa);
+    // Get catchment area (700 meters) of combined shops within the adminstrative area
+    if (shopsAa.features.length > 0) {
+      let shopsAaBuffer = buffer(shopsAa, 700, { units: 'meters' });
+      // edit properties of shop union and push it to dataBiType collection
+      let shopsAaUnion = unionMultipleFeatures(shopsAaBuffer);
+      shopsAaUnion.properties = {};
+      shopsAaUnion.properties.bike_infrastructure_type = 'shop_buffer';
+      shopsAaUnion.properties.admin_area = singleAa.properties.name;
+      dataBiType.features.push(shopsAaUnion);
+      console.log('Shops union', shopsAaUnion);
+      // calculate the intersection and its area in km2
+      let shopsAaIntersection: any = intersect(singleAa, shopsAaUnion);
+      console.log('Shops buffer intersection', shopsAaIntersection);
+      let serviceCoverage =
+        Math.round((geoarea(shopsAaIntersection) / 1000000) * 1000) / 1000;
+      adminAreas[i].properties.service.coverage = serviceCoverage;
+    } else if (shopsAa.features.length === 0) {
+      adminAreas[i].properties.service.coverage = 0;
+    }
+
+    // Test logging
     console.log(singleAa.properties.name, singleAa);
 
     // Push admin_area to dataBiType
     adminAreas[i].properties.bike_infrastructure_type = 'admin_area';
     dataBiType.features.push(singleAa);
-
-    // SERVICE FACILITIES
-    //-------------------
-    // 700 meters
   }
   return dataBiType;
 }
