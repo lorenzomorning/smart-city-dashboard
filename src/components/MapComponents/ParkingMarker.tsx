@@ -91,7 +91,7 @@ const MapCarParkComponent = () => {
               iconAnchor: [16, 16],
             })}
           >
-            <Popup closeButton={false}>
+            <Popup closeButton={false} pane="popup">
               <PopupContent>
                 {chartData && chartData.length > 0 && (
                   <TimeSeriesChart

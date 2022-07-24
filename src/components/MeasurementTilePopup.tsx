@@ -32,6 +32,7 @@ interface MeasurementTileProps {
   header: string;
   value: number;
   status?: Status;
+  unit?: string;
   decimals?: number;
 }
 
@@ -78,14 +79,15 @@ const MeasurementContainer = styled.div<TileStyleProps>`
 const TopText = styled.p`
   font-weight: var(--scms-semi-bold);
   position: absolute;
-  top: 5%;
+  top: 3%;
   hyphens: auto;
 `;
 
 const Value = styled.p`
   font-weight: var(--scms-semi-bold);
   position: absolute;
-  top: 25%;
+  top: 30%;
+  line-height: 0.5;
 `;
 
 const MeasurementTilePopup = (props: MeasurementTileProps) => {
@@ -99,6 +101,8 @@ const MeasurementTilePopup = (props: MeasurementTileProps) => {
             decimals={props.decimals != null ? props.decimals : 1}
           />
         </Suspense>
+        <wbr />
+        <span className="is-size-7">{props.unit}</span>
       </Value>
     </MeasurementContainer>
   );

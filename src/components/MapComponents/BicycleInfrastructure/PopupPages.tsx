@@ -109,7 +109,7 @@ const PopupAdminArea = (props: IPopupAdminAreaProps) => {
             <IconWrapper>
               <ParkingIcon fill="#203864" />
             </IconWrapper>
-            {<p className="is-size-5">{'arken ' + props.name}</p>}
+            {<p className="is-size-5">{'Parken ' + props.name}</p>}
           </HeadingWrapper>
           <ContentWrapper>{props.contentParking}</ContentWrapper>
           <FooterWrapper>

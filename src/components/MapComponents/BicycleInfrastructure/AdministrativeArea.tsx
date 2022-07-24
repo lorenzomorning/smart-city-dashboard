@@ -26,6 +26,8 @@ import { TilesWrapper } from '../../styles';
 import styled from 'styled-components';
 import PopupAdminArea from './PopupPages';
 import MeasurementTilePopup from '../../MeasurementTilePopup';
+import DonutChart from '../../DonutChart';
+import SliderCarousel from '../../SlideCarousel';
 
 const MeasurementTile = lazy(() => import('../../MeasurementTilePopup'));
 
@@ -119,6 +121,51 @@ const AdministrativeAreas = () => {
                   >
                     <PopupAdminArea
                       name={feature.properties.name}
+                      contentParking={
+                        <SliderCarousel
+                          contentCapacity={feature.properties.name}
+                          contentWeather={feature.properties.name}
+                          contentTheft={feature.properties.name}
+                          contentTypes={
+                            <DonutChart
+                              id="parkingTypes"
+                              title="Parktyp"
+                              type="donut"
+                              width={300}
+                              height={200}
+                              series={Object.values(
+                                feature.properties.parking.type
+                              )}
+                              chartOptions={{
+                                labels: Object.keys(
+                                  feature.properties.parking.type
+                                ),
+                                dataLabels: {
+                                  enabled: false,
+                                  // style: {
+                                  //   colors: Array(
+                                  //     Object.keys(feature.properties.parking.type)
+                                  //       .length
+                                  //   ).fill('#00000'),
+                                  // },
+                                  // dropShadow: {
+                                  //   enabled: true,
+                                  // },
+                                },
+                              }}
+                            />
+                          }
+                        ></SliderCarousel>
+                      }
+                      contentCycling={
+                        <progress
+                          className="progress is-large"
+                          value="80"
+                          max="100"
+                        >
+                          80%
+                        </progress>
+                      }
                       contentService={
                         <TilesWrapper>
                           <Suspense
@@ -145,7 +192,8 @@ const AdministrativeAreas = () => {
                             <MeasurementTilePopup
                               header="Abdeckung"
                               value={feature.properties.service.coverage}
-                              decimals={3}
+                              decimals={2}
+                              unit="km2"
                             ></MeasurementTilePopup>
                           </Suspense>
                         </TilesWrapper>

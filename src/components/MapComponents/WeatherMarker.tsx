@@ -112,7 +112,7 @@ const WeatherMarker = React.memo(() => {
             {timeseries &&
               timeseries.length > 0 &&
               timeseries.find((e) => e.sensor._id === sensor._id) && (
-                <Popup closeButton={false}>
+                <Popup closeButton={false} pane="popup">
                   <PopupContent>
                     <TimeSeriesChart
                       id="osem"

@@ -66,7 +66,7 @@ const AaseeMarker = () => {
             iconAnchor: [16, 16],
           })}
         >
-          <Popup closeButton={false}>
+          <Popup closeButton={false} pane="popup">
             <PopupContent>
               <TimeSeriesChart
                 id="aasee"
