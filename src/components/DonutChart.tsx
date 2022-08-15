@@ -23,6 +23,7 @@ import merge from 'lodash/merge';
 interface IDonutChartProps {
   id: string;
   series: any[];
+  colors?: any[];
   height?: number | string;
   width?: number | string;
   title?: string;
@@ -62,7 +63,21 @@ const DonutChart = (props: IDonutChartProps) => {
         enabled: false,
       },
       fontFamily: 'Open Sans, sans-serif',
+      animations: {
+        enabled: true,
+        easing: 'easeinout',
+        speed: 1000,
+        animateGradually: {
+          enabled: true,
+          delay: 150,
+        },
+        dynamicAnimation: {
+          enabled: true,
+          speed: 350,
+        },
+      },
     },
+    colors: props.colors,
     dataLabels: {
       enabled: true,
       style: { fontSize: '8px' },

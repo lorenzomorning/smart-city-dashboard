@@ -304,7 +304,35 @@ export function addAttributes(dataBiType: any) {
 
       // Parking type + weather protection + theft protection
       if (properties.bicycle_parking) {
-        attributesFeature.push({ Typ: properties.bicycle_parking });
+        let parkingType = properties.bicycle_parking;
+        switch (parkingType) {
+          case 'shed':
+            attributesFeature.push({ Typ: 'Radstall' });
+            break;
+          case 'stands':
+          case 'wide_stands':
+            attributesFeature.push({ Typ: 'Anlehnbügel' });
+            break;
+          case 'groundslots':
+          case 'anchors':
+            attributesFeature.push({ Typ: '(Boden)Anker' });
+            break;
+          case 'lockers':
+            attributesFeature.push({ Typ: 'Radboxen' });
+            break;
+          case 'rack':
+          case 'wall_loops':
+            attributesFeature.push({ Typ: 'Reifenständer' });
+            break;
+          case 'building':
+            attributesFeature.push({ Typ: 'Rad-Gebäude' });
+            break;
+          case 'handlebar_holder':
+            attributesFeature.push({ Typ: 'Lenkerhalter' });
+            break;
+          case 'two-tier':
+            attributesFeature.push({ Typ: 'Doppeletage' });
+        }
         if (
           ['shed', 'lockers', 'building'].includes(properties.bicycle_parking)
         ) {
@@ -325,8 +353,9 @@ export function addAttributes(dataBiType: any) {
             attributesFeature.push({ Wettergeschützt: 'unknown' });
           }
         }
-      } else {
-        attributesFeature.push({ Typ: 'unknown' });
+      }
+      if (!('Typ' in attributesFeature)) {
+        attributesFeature.push({ Typ: 'Unbekannt' });
       }
       // Theft protection
       if (properties.surveillance) {

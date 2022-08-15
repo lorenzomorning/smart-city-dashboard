@@ -24,7 +24,7 @@ import { FeatureGroup, Pane, Polygon, Popup, Tooltip } from 'react-leaflet';
 import flip from '@turf/flip';
 import { TilesWrapper } from '../../styles';
 import styled from 'styled-components';
-import PopupAdminArea from './PopupPages';
+import PopupPages from './PopupPages';
 import MeasurementTilePopup from '../../MeasurementTilePopup';
 import DonutChart from '../../DonutChart';
 import SliderCarousel from '../../SlideCarousel';
@@ -94,7 +94,6 @@ const AdministrativeAreas = () => {
     }
   }
 
-  // return Feature Group only when zoom is higher than 16 and if parkingOverlay === true
   return (
     <>
       {exploreMode && (
@@ -119,17 +118,17 @@ const AdministrativeAreas = () => {
                     autoClose={false}
                     closeOnClick={false}
                   >
-                    <PopupAdminArea
+                    <PopupPages
                       name={feature.properties.name}
                       contentParking={
                         <SliderCarousel
-                          contentCapacity={feature.properties.name}
-                          contentWeather={feature.properties.name}
-                          contentTheft={feature.properties.name}
+                          contentCapacity={<span>Kapazität</span>}
+                          contentWeather={<span>Wettergeschützt</span>}
+                          contentTheft={<span>Diebstahlegschützt</span>}
                           contentTypes={
                             <DonutChart
                               id="parkingTypes"
-                              title="Parktyp"
+                              title="Parktypen"
                               type="donut"
                               width={300}
                               height={200}
@@ -142,17 +141,32 @@ const AdministrativeAreas = () => {
                                 ),
                                 dataLabels: {
                                   enabled: false,
-                                  // style: {
-                                  //   colors: Array(
-                                  //     Object.keys(feature.properties.parking.type)
-                                  //       .length
-                                  //   ).fill('#00000'),
-                                  // },
-                                  // dropShadow: {
-                                  //   enabled: true,
-                                  // },
                                 },
                               }}
+                              colors={Object.keys(
+                                feature.properties.parking.type
+                              ).map((type: string) => {
+                                switch (type) {
+                                  case 'Unbekannt':
+                                    return '#bcbcbc';
+                                  case 'Radstall':
+                                    return '#f8cc1b';
+                                  case 'Anlehnbügel':
+                                    return '#fa7a48';
+                                  case '(Boden)Anker':
+                                    return '#ab0a58';
+                                  case 'Radboxen':
+                                    return '#bed057';
+                                  case 'Reifenständer':
+                                    return '#84a2cd';
+                                  case 'Rad-Gebäude':
+                                    return '#442276';
+                                  case 'Lenkerhalter':
+                                    return '#ffa5c8';
+                                  case 'Doppeletage':
+                                    return '#4777cd';
+                                }
+                              })}
                             />
                           }
                         ></SliderCarousel>
@@ -198,7 +212,7 @@ const AdministrativeAreas = () => {
                           </Suspense>
                         </TilesWrapper>
                       }
-                    ></PopupAdminArea>
+                    ></PopupPages>
                   </StyledPopup>
                 </Polygon>
               );

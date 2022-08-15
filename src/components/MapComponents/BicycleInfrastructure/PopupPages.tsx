@@ -19,82 +19,27 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
+import {
+  PopupWrapper,
+  ContentWrapper,
+  HeadingWrapper,
+  IconWrapper,
+  FooterWrapper,
+  FooterButton,
+  HighlightedFooterButton,
+} from './styles';
 import ReactMarkdown from 'react-markdown';
-
-import { FooterWrapper } from '../../styles';
 
 import { CyclingIcon, ShopIcon, ParkingIcon } from '../../Icons';
 
-interface IPopupAdminAreaProps {
+interface IPopupPagesProps {
   name: string;
   contentParking?: JSX.Element;
   contentCycling?: JSX.Element;
   contentService?: JSX.Element;
 }
 
-const PopupWrapper = styled.div`
-  margin: 0rem;
-  padding: 0rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-`;
-
-const ContentWrapper = styled.div`
-  height: 100%;
-  position: relative;
-`;
-
-const HeadingWrapper = styled.div`
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const IconWrapper = styled.div`
-  margin-right: 1rem;
-  > svg {
-    width: 3rem;
-    height: 3rem;
-  }
-`;
-
-const FooterButton = styled.button`
-  cursor: pointer;
-  user-select: none;
-  background-color: rgba(189, 189, 189, 0.15);
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
-  border-radius: 0.25rem;
-  margin-left: 0.5rem;
-  margin-right: 0.5rem;
-  margin-top: 0.5rem;
-  border: none;
-  outline: none;
-
-  > a {
-    color: inherit;
-  }
-
-  &:hover {
-    background-color: rgba(189, 189, 189, 0.5);
-  }
-`;
-
-const HighlightedFooterButton = styled(FooterButton)<{ bold?: boolean }>`
-  background-color: rgba(0, 159, 227, 0.15);
-
-  font-weight: ${(props) => (props.bold ? '600' : '')};
-
-  &:hover {
-    background-color: rgba(0, 159, 227, 0.15);
-  }
-`;
-
-const PopupAdminArea = (props: IPopupAdminAreaProps) => {
+const PopupPages = (props: IPopupPagesProps) => {
   const dispatch = useDispatch();
 
   const [showParking, setShowParking] = useState(true);
@@ -109,7 +54,7 @@ const PopupAdminArea = (props: IPopupAdminAreaProps) => {
             <IconWrapper>
               <ParkingIcon fill="#203864" />
             </IconWrapper>
-            {<p className="is-size-5">{'Parken ' + props.name}</p>}
+            {<p className="is-size-4">{'Parken ' + props.name}</p>}
           </HeadingWrapper>
           <ContentWrapper>{props.contentParking}</ContentWrapper>
           <FooterWrapper>
@@ -203,4 +148,4 @@ const PopupAdminArea = (props: IPopupAdminAreaProps) => {
   );
 };
 
-export default PopupAdminArea;
+export default PopupPages;

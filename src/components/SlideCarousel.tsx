@@ -19,16 +19,6 @@
 import 'react-responsive-carousel/lib/styles/carousel_edited.css'; // requires a loader
 import { Carousel } from 'react-responsive-carousel';
 
-import styled from 'styled-components';
-
-const Wrapper = styled.div`
-  align: 'center';
-  fontsize: '14px';
-  fontweight: '600';
-  fontfamily: 'Open Sans, sans-serif';
-  color: '#263238';
-`;
-
 interface ISliderCarouselProps {
   contentCapacity: JSX.Element;
   contentWeather: JSX.Element;
