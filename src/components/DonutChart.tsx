@@ -77,11 +77,42 @@ const DonutChart = (props: IDonutChartProps) => {
         },
       },
     },
-    colors: props.colors,
     dataLabels: {
-      enabled: true,
-      style: { fontSize: '8px' },
+      enabled: false,
     },
+    plotOptions: {
+      pie: {
+        expandOnClick: false,
+        donut: {
+          size: '65%',
+          background: 'transparent',
+          labels: {
+            show: true,
+            name: {
+              show: true,
+              fontSize: '12px',
+              fontFamily: 'Open Sans, sans-serif',
+              fontWeight: 600,
+              color: '#263238',
+              offsetY: -10,
+            },
+            value: {
+              show: true,
+              fontSize: '16px',
+              fontFamily: 'Open Sans, sans-serif',
+              fontWeight: 400,
+              color: '#263238',
+              offsetY: 15,
+            },
+            total: {
+              show: true,
+              showAlways: true,
+            },
+          },
+        },
+      },
+    },
+    colors: props.colors,
     legend: {
       position: 'right',
       fontSize: '12px',
@@ -101,7 +132,7 @@ const DonutChart = (props: IDonutChartProps) => {
       align: 'center',
       style: {
         fontSize: '14px',
-        fontWeight: '600',
+        fontWeight: 600,
         fontFamily: 'Open Sans, sans-serif',
         color: '#263238',
       },

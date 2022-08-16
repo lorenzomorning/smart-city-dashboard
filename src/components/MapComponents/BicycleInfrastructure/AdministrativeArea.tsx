@@ -139,9 +139,9 @@ const AdministrativeAreas = () => {
                                 labels: Object.keys(
                                   feature.properties.parking.type
                                 ),
-                                dataLabels: {
-                                  enabled: false,
-                                },
+                                // dataLabels: {
+                                //   enabled: false,
+                                // },
                               }}
                               colors={Object.keys(
                                 feature.properties.parking.type
