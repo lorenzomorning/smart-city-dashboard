@@ -19,7 +19,7 @@
 import React, { lazy, Suspense } from 'react';
 import styled from 'styled-components';
 
-const AnimatedNumber = lazy(() => import('./AnimatedNumber'));
+const AnimatedNumber = lazy(() => import('../../AnimatedNumber'));
 
 export enum Status {
   good,
@@ -28,9 +28,15 @@ export enum Status {
   dummy,
 }
 
+export enum Size {
+  big,
+  normal,
+}
+
 interface MeasurementTileProps {
-  header: string;
   value: number;
+  header?: string;
+  size: Size;
   status?: Status;
   unit?: string;
   decimals?: number;
@@ -38,6 +44,7 @@ interface MeasurementTileProps {
 
 interface TileStyleProps {
   status?: Status;
+  size?: Size;
 }
 
 const MeasurementContainer = styled.div<TileStyleProps>`
@@ -61,8 +68,22 @@ const MeasurementContainer = styled.div<TileStyleProps>`
   padding: 0.5rem;
   text-align: center;
   border-radius: 1rem;
-  width: 5rem;
-  height: 5rem;
+  width: ${(props) => {
+    switch (props.size) {
+      case Size.big:
+        return '7rem';
+      case Size.normal:
+        return '5rem';
+    }
+  }};
+  height: ${(props) => {
+    switch (props.size) {
+      case Size.big:
+        return '7rem';
+      case Size.normal:
+        return '5rem';
+    }
+  }};
   box-shadow: var(--scms-box-shadow);
   display: flex;
   flex-direction: column;
@@ -92,18 +113,32 @@ const Value = styled.p`
 
 const MeasurementTilePopup = (props: MeasurementTileProps) => {
   return (
-    <MeasurementContainer status={props.status}>
+    <MeasurementContainer status={props.status} size={props.size}>
       <TopText className="is-size-7">{props.header}</TopText>
-      <Value className="is-size-4">
-        <Suspense fallback={<span>0</span>}>
-          <AnimatedNumber
-            value={Number(props.value)}
-            decimals={props.decimals != null ? props.decimals : 1}
-          />
-        </Suspense>
-        <wbr />
-        <span className="is-size-7">{props.unit}</span>
-      </Value>
+      {props.size === Size.normal && (
+        <Value className="is-size-4">
+          <Suspense fallback={<span>0</span>}>
+            <AnimatedNumber
+              value={Number(props.value)}
+              decimals={props.decimals != null ? props.decimals : 1}
+            />
+          </Suspense>
+          <wbr />
+          <span className="is-size-7">{props.unit}</span>
+        </Value>
+      )}
+      {props.size === Size.big && (
+        <Value className="is-size-2">
+          <Suspense fallback={<span>0</span>}>
+            <AnimatedNumber
+              value={Number(props.value)}
+              decimals={props.decimals != null ? props.decimals : 1}
+            />
+          </Suspense>
+          <wbr />
+          <span className="is-size-7">{props.unit}</span>
+        </Value>
+      )}
     </MeasurementContainer>
   );
 };

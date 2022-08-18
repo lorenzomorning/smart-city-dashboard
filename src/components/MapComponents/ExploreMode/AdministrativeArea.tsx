@@ -30,7 +30,8 @@ import {
   CapacitySliderWrapper,
   CapacityLegend,
 } from './styles';
-import MeasurementTilePopup from '../../MeasurementTilePopup';
+import { Size } from './MeasurementTilePopup';
+import MeasurementTilePopup from './MeasurementTilePopup';
 
 import PopupPages from './PopupPages';
 import DonutChart from './DonutChart';
@@ -126,6 +127,30 @@ const AdministrativeAreas = () => {
                       name={feature.properties.name}
                       contentParking={
                         <SliderCarousel
+                          contentParkingunits={
+                            <>
+                              <ChartHeadingWrapper>
+                                <span className="is-size-6">
+                                  {'Parkeinheiten'}
+                                </span>
+                              </ChartHeadingWrapper>
+                              <TilesWrapper>
+                                <Suspense
+                                  fallback={
+                                    <Skeleton width="100%" height="100%" />
+                                  }
+                                >
+                                  <MeasurementTilePopup
+                                    size={Size.big}
+                                    value={
+                                      feature.properties.parking.freqObjects
+                                    }
+                                    decimals={0}
+                                  ></MeasurementTilePopup>
+                                </Suspense>
+                              </TilesWrapper>
+                            </>
+                          }
                           contentCapacity={
                             <>
                               <ChartHeadingWrapper>
@@ -166,8 +191,41 @@ const AdministrativeAreas = () => {
                               </CapacitySliderWrapper>
                             </>
                           }
-                          contentWeather={<span>Wettergeschützt</span>}
-                          contentTheft={<span>Diebstahlegschützt</span>}
+                          contentWeather={
+                            <>
+                              <ChartHeadingWrapper>
+                                <span className="is-size-6">
+                                  {'Wetterschutz'}
+                                </span>
+                              </ChartHeadingWrapper>
+                              <DonutChart
+                                id="parkingWeather"
+                                type="donut"
+                                width={300}
+                                height={200}
+                                series={Object.values(
+                                  feature.properties.parking.weather
+                                )}
+                                chartOptions={{
+                                  labels: Object.keys(
+                                    feature.properties.parking.weather
+                                  ),
+                                }}
+                                colors={Object.keys(
+                                  feature.properties.parking.weather
+                                ).map((type: string) => {
+                                  switch (type) {
+                                    case 'Unbekannt':
+                                      return '#bcbcbc';
+                                    case 'Ja':
+                                      return 'var(--scms-green)';
+                                    case 'Nein':
+                                      return 'var(--scms-red)';
+                                  }
+                                })}
+                              />
+                            </>
+                          }
                           contentTypes={
                             <>
                               <ChartHeadingWrapper>
@@ -230,6 +288,7 @@ const AdministrativeAreas = () => {
                             fallback={<Skeleton width="100%" height="100%" />}
                           >
                             <MeasurementTilePopup
+                              size={Size.normal}
                               header="Innerhalb"
                               value={feature.properties.service.shopsWithin}
                               decimals={0}
@@ -239,6 +298,7 @@ const AdministrativeAreas = () => {
                             fallback={<Skeleton width="100%" height="100%" />}
                           >
                             <MeasurementTilePopup
+                              size={Size.normal}
                               header="In der Nähe"
                               value={feature.properties.service.shopsNearby}
                               decimals={0}
@@ -248,6 +308,7 @@ const AdministrativeAreas = () => {
                             fallback={<Skeleton width="100%" height="100%" />}
                           >
                             <MeasurementTilePopup
+                              size={Size.normal}
                               header="Abdeckung"
                               value={feature.properties.service.coverage}
                               decimals={2}

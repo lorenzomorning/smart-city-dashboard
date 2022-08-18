@@ -20,9 +20,9 @@ import 'react-responsive-carousel/lib/styles/carousel_edited.css'; // requires a
 import { Carousel } from 'react-responsive-carousel';
 
 interface ISliderCarouselProps {
+  contentParkingunits: JSX.Element;
   contentCapacity: JSX.Element;
   contentWeather: JSX.Element;
-  contentTheft: JSX.Element;
   contentTypes: JSX.Element;
 }
 
@@ -36,9 +36,9 @@ const SliderCarousel = (props: ISliderCarouselProps) => {
       showThumbs={false}
       showIndicators={false}
     >
+      <div>{props.contentParkingunits}</div>
       <div>{props.contentCapacity}</div>
       <div>{props.contentWeather}</div>
-      <div>{props.contentTheft}</div>
       <div>{props.contentTypes}</div>
     </Carousel>
   );

@@ -36,7 +36,7 @@ export const HeadingWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: var(--scms-semi-bold);
+  font-weight: 400;
 `;
 
 export const IconWrapper = styled.div`
@@ -99,7 +99,7 @@ export const CapacitySliderWrapper = styled.div`
   padding: 0.5rem;
 `;
 
-export const ChartHeadingWrapper = styled(HeadingWrapper)`
+export const ChartHeadingWrapper = styled.div`
   align-items: center;
   justify-content: center;
   font-weight: 600;

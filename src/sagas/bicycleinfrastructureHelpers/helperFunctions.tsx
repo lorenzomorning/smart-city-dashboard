@@ -953,7 +953,7 @@ export function aggregateBiAdminArea(dataAa: any, dataBiType: any) {
         'unknown'
       );
     }).length;
-    adminAreas[i].properties.parking.weather.freqUnknown = freqUnknownWeather;
+    adminAreas[i].properties.parking.weather.Unbekannt = freqUnknownWeather;
 
     // Count frequency of parking points with weather protection
     let freqYesWeather = parkingWithin.filter((feature: any) => {
@@ -966,7 +966,7 @@ export function aggregateBiAdminArea(dataAa: any, dataBiType: any) {
         feature.properties.attributes[indexWeather]['Wettergeschützt'] === 'yes'
       );
     }).length;
-    adminAreas[i].properties.parking.weather.freqYes = freqYesWeather;
+    adminAreas[i].properties.parking.weather.Ja = freqYesWeather;
 
     // Count frequency of parking points without weather protection
     let freqNoWeather = parkingWithin.filter((feature: any) => {
@@ -979,7 +979,7 @@ export function aggregateBiAdminArea(dataAa: any, dataBiType: any) {
         feature.properties.attributes[indexWeather]['Wettergeschützt'] === 'no'
       );
     }).length;
-    adminAreas[i].properties.parking.weather.freqNo = freqNoWeather;
+    adminAreas[i].properties.parking.weather.Nein = freqNoWeather;
 
     // Initialise theftprotection object
     adminAreas[i].properties.parking.theft = {};
