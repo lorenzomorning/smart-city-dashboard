@@ -44,6 +44,9 @@ export const IconWrapper = styled.div`
   > svg {
     width: 3rem;
     height: 3rem;
+    fill: var(--scms-primary-blue);
+    stroke: var(--scms-primary-blue);
+    opacity: 0.3;
   }
 `;
 

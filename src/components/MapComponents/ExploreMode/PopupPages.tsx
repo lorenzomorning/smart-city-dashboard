@@ -52,7 +52,7 @@ const PopupPages = (props: IPopupPagesProps) => {
         <PopupWrapper>
           <HeadingWrapper>
             <IconWrapper>
-              <ParkingIcon fill="#203864" />
+              <ParkingIcon />
             </IconWrapper>
             {<span className="is-size-4">{props.name}</span>}
           </HeadingWrapper>
@@ -116,7 +116,7 @@ const PopupPages = (props: IPopupPagesProps) => {
         <PopupWrapper>
           <HeadingWrapper>
             <IconWrapper>
-              <ShopIcon fill="#385723" />
+              <ShopIcon />
             </IconWrapper>
             {<p className="is-size-5">{'Läden ' + props.name}</p>}
           </HeadingWrapper>
