@@ -54,7 +54,7 @@ const PopupPages = (props: IPopupPagesProps) => {
             <IconWrapper>
               <ParkingIcon fill="#203864" />
             </IconWrapper>
-            {<p className="is-size-4">{'Parken ' + props.name}</p>}
+            {<span className="is-size-4">{props.name}</span>}
           </HeadingWrapper>
           <ContentWrapper>{props.contentParking}</ContentWrapper>
           <FooterWrapper>

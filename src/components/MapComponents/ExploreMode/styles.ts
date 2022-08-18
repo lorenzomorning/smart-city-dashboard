@@ -36,6 +36,7 @@ export const HeadingWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  font-weight: var(--scms-semi-bold);
 `;
 
 export const IconWrapper = styled.div`
@@ -84,5 +85,46 @@ export const HighlightedFooterButton = styled(FooterButton)<{ bold?: boolean }>`
 
   &:hover {
     background-color: rgba(0, 159, 227, 0.15);
+  }
+`;
+
+export const CapacitySliderWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-height: 25rem;
+  @media screen and (min-width: 788px) and (max-width: 1290px) {
+    max-height: 42rem;
+  }
+  padding: 0.5rem;
+`;
+
+export const ChartHeadingWrapper = styled(HeadingWrapper)`
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: '#263238';
+`;
+
+export const CapacityLegend = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin: 0 rem;
+  padding: 0 rem;
+
+  > * {
+    padding: 2 rem;
+  }
+
+  > .blue {
+    color: var(--scms-primary-blue);
+  }
+
+  > .red {
+    color: var(--scms-red);
+  }
+
+  > .green {
+    color: var(--scms-green);
   }
 `;
