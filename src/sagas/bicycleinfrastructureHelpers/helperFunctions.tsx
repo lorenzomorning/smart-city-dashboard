@@ -981,69 +981,79 @@ export function aggregateBiAdminArea(dataAa: any, dataBiType: any) {
     }).length;
     adminAreas[i].properties.parking.weather.Nein = freqNoWeather;
 
-    // Initialise theftprotection object
-    adminAreas[i].properties.parking.theft = {};
+    // HASHED OUT: It works but we decided not to include it
+    // // Initialise theftprotection object
+    // adminAreas[i].properties.parking.theft = {};
 
-    // Count frequency of parking points with unknown theft protection
-    let freqUnknownTheft = parkingWithin.filter((feature: any) => {
-      const containsTheft = (attributePair: any) =>
-        Object.keys(attributePair).includes('Diebstahlsicher');
-      let indexTheft = feature.properties.attributes.findIndex(containsTheft);
-      return (
-        feature.properties.attributes[indexTheft]['Diebstahlsicher'] ===
-        'unknown'
-      );
-    }).length;
-    adminAreas[i].properties.parking.theft.freqUnknown = freqUnknownTheft;
+    // // Count frequency of parking points with unknown theft protection
+    // let freqUnknownTheft = parkingWithin.filter((feature: any) => {
+    //   const containsTheft = (attributePair: any) =>
+    //     Object.keys(attributePair).includes('Diebstahlsicher');
+    //   let indexTheft = feature.properties.attributes.findIndex(containsTheft);
+    //   return (
+    //     feature.properties.attributes[indexTheft]['Diebstahlsicher'] ===
+    //     'unknown'
+    //   );
+    // }).length;
+    // adminAreas[i].properties.parking.theft.Unbekannt = freqUnknownTheft;
 
-    // Count frequency of parking points with theft protection
-    let freqYesTheft = parkingWithin.filter((feature: any) => {
-      const containsTheft = (attributePair: any) =>
-        Object.keys(attributePair).includes('Diebstahlsicher');
-      let indexTheft = feature.properties.attributes.findIndex(containsTheft);
-      return (
-        feature.properties.attributes[indexTheft]['Diebstahlsicher'] === 'yes'
-      );
-    }).length;
-    adminAreas[i].properties.parking.theft.freqYes = freqYesTheft;
+    // // Count frequency of parking points with theft protection
+    // let freqYesTheft = parkingWithin.filter((feature: any) => {
+    //   const containsTheft = (attributePair: any) =>
+    //     Object.keys(attributePair).includes('Diebstahlsicher');
+    //   let indexTheft = feature.properties.attributes.findIndex(containsTheft);
+    //   return (
+    //     feature.properties.attributes[indexTheft]['Diebstahlsicher'] === 'yes'
+    //   );
+    // }).length;
+    // adminAreas[i].properties.parking.theft.Ja = freqYesTheft;
 
-    // Count frequency of parking points without theft protection
-    let freqNoTheft = parkingWithin.filter((feature: any) => {
-      const containsTheft = (attributePair: any) =>
-        Object.keys(attributePair).includes('Diebstahlsicher');
-      let indexTheft = feature.properties.attributes.findIndex(containsTheft);
-      return (
-        feature.properties.attributes[indexTheft]['Diebstahlsicher'] === 'no'
-      );
-    }).length;
-    adminAreas[i].properties.parking.theft.freqNo = freqNoTheft;
+    // // Count frequency of parking points without theft protection
+    // let freqNoTheft = parkingWithin.filter((feature: any) => {
+    //   const containsTheft = (attributePair: any) =>
+    //     Object.keys(attributePair).includes('Diebstahlsicher');
+    //   let indexTheft = feature.properties.attributes.findIndex(containsTheft);
+    //   return (
+    //     feature.properties.attributes[indexTheft]['Diebstahlsicher'] === 'no'
+    //   );
+    // }).length;
+    // adminAreas[i].properties.parking.theft.Nein = freqNoTheft;
 
     // CYCLING
     //--------
     adminAreas[i].properties.cycling = {};
-    // Find all requested cylcingLines
-    // let linesCycling = dataBiType.features.filter(
-    //   (feature: any) =>
-    //     (feature.properties.bike_infrastructure_type === 'cycling_street' ||
-    //       feature.properties.bike_infrastructure_type === 'traffic_calming' ||
-    //       feature.properties.bike_infrastructure_type === 'cycling_network' ||
-    //       feature.properties.bike_infrastructure_type === 'cycle_lane' ||
-    //       feature.properties.bike_infrastructure_type ===
-    //         'separated_cycle_lane') &&
-    //     (feature.geometry.type === 'LineString' ||
-    //       feature.geometry.type === 'MultiLineString')
-    // );
-    // linesCycling = featureCollection(linesCycling);
-    // console.log('LinesCycling', linesCycling);
 
-    // Clip all cylcing lines to the Administrative Area
-    // let linesCyclingWithin = clipLineFeatureCollectionbyAa(
-    //   linesCycling,
-    //   singleAa
-    // );
-    // console.log('LinesWithin', linesCyclingWithin);
+    // NETWORK LANES
+    adminAreas[i].properties.cycling.network = {};
+    let network = dataBiType.features.filter(
+      (feature: any) =>
+        feature.properties.bike_infrastructure_type === 'cycling_network' &&
+        ['LineString', 'MultiLineString'].includes(feature.geometry.type)
+    );
+    let networkWithin = clipLineFeatureCollectionbyPolygon(
+      featureCollection(network),
+      singleAa
+    );
+    /* HASHED OUT
+    Filtering the network by the administrative areas works. 
+    Problem:  What is an appropriate numerical aggregation for the 
+              quality of a network in one area? 
+              The total length is not meangingful here, as it is e.g.
+              pushed when a main street is accompanied beside by two line 
+              geometries of a cycling network. So the directional split
+              leads to doubled length, while a single cycling path that
+              can be use in both directions is onle represented by one line 
+              geometry   
+    */
+    // let networkLength = Math.round(geomlength(networkWithin) * 100) / 100;
+    // adminAreas[i].properties.cycling.network.lengthKM = networkLength;
 
-    // Cycling streets
+    let networkBuffer = buffer(networkWithin, 20, { units: 'meters' });
+
+    let networkUnion = unionMultipleFeatures(networkBuffer);
+    console.log('Network Union Within', networkUnion);
+
+    // CYCLING STREETS
     adminAreas[i].properties.cycling.cyclingstreets = {};
     let cyclingStreets = dataBiType.features.filter(
       (feature: any) =>
@@ -1062,47 +1072,38 @@ export function aggregateBiAdminArea(dataAa: any, dataBiType: any) {
       i
     ].properties.cycling.cyclingstreets.lengthKM = cyclingStreetsLength;
 
-    // Filter network lanes
-    adminAreas[i].properties.cycling.network = {};
-    let network = dataBiType.features.filter(
-      (feature: any) =>
-        feature.properties.bike_infrastructure_type === 'cycling_network' &&
-        ['LineString', 'MultiLineString'].includes(feature.geometry.type)
-    );
-    let networkWithin = clipLineFeatureCollectionbyPolygon(
-      featureCollection(network),
-      singleAa
-    );
-    let networkLength = Math.round(geomlength(networkWithin) * 100) / 100;
-    adminAreas[i].properties.cycling.network.lengthKM = networkLength;
-
-    let networkBuffer = buffer(networkWithin, 20, { units: 'meters' });
-
-    let networkUnion = unionMultipleFeatures(networkBuffer);
-    console.log('Network Union Within', networkUnion);
-
     // Cycling Streets intersection with Network
-    // let cyclingStreetsNetwork = clipLineFeatureCollectionbyPolygon(
-    //   cyclingStreetsWithin,
-    //   networkUnion
-    // );
-    // let networkCyclingStreetsLength =
-    //   Math.round(geomlength(cyclingStreetsNetwork) * 100) / 100;
-    // adminAreas[
-    //   i
-    // ].properties.cycling.network.lengthKMcyclingStreets = networkCyclingStreetsLength;
-    // console.log('Cycling Streets Network', cyclingStreetsNetwork);
+    let cyclingStreetsNetwork = clipLineFeatureCollectionbyPolygon(
+      cyclingStreetsWithin,
+      networkUnion
+    );
+    let networkCyclingStreetsLength =
+      Math.round(geomlength(cyclingStreetsNetwork) * 100) / 100;
+    adminAreas[
+      i
+    ].properties.cycling.network.lengthKMcyclingStreets = networkCyclingStreetsLength;
+    console.log('Cycling Streets Network', cyclingStreetsNetwork);
 
-    // Sep Lanes intersection with Network
+    // SEPERATED LANES
+    /* HASHED OUT
+    Filtering the separated lanes by the administrative areas works. 
+    Problem:  What is an appropriate numerical aggregation for this type of 
+              separated lanes in one area? 
+              The total length is not meangingful here, as it is e.g.
+              pushed when a main street is accompanied beside by two line 
+              geometries of separated lanes. So the directional split
+              leads to doubled length, compared to the other mapping option, 
+              where only main street as line geometry contains a tag for 
+              separated lanes on both sides.   
+    */
     // let sepLanes = dataBiType.features.filter(
     //   (feature: any) =>
     //     feature.properties.bike_infrastructure_type ===
     //       'separated_cycle_lane' &&
     //     ['LineString', 'MultiLineString'].includes(feature.geometry.type)
     // );
-
-    // Problem here is that separated lanes are sometimes duplicated on both sides of the roads
-
+    //
+    // Sepearted lanes intersection with Network
     // let sepLanesNetwork = clipLineFeatureCollectionbyPolygon(
     //   featureCollection(sepLanes),
     //   networkUnion
@@ -1114,15 +1115,20 @@ export function aggregateBiAdminArea(dataAa: any, dataBiType: any) {
     // ].properties.cycling.network.lengthKMsepLanes = networkSepLanesLength;
     // console.log('Separated Lanes Network', sepLanesNetwork);
 
-    // Filter cycling lanes
+    // ON-STREET LANES
+    /* HASHED OUT
+    Filtering the on-street lanes by the administrative areas works. 
+    Problem:  What is an appropriate numerical aggregation for this type of 
+              on-street lanes in one area? 
+              The total length is not meangingful here. 
+    */
     // let lanes = dataBiType.features.filter(
     //   (feature: any) =>
     //     feature.properties.bike_infrastructure_type === 'cycle_lane' &&
     //     ['LineString', 'MultiLineString'].includes(feature.geometry.type)
     // );
-
-    // Problem here is that lanes are sometimes duplicated on both sides of the roads
-
+    //
+    // On-street lanes intersection with Network
     // let lanesNetwork = clipLineFeatureCollectionbyPolygon(
     //   featureCollection(lanes),
     //   networkUnion
@@ -1131,7 +1137,15 @@ export function aggregateBiAdminArea(dataAa: any, dataBiType: any) {
     // adminAreas[i].properties.cycling.network.lengthKMlanes = networkLanesLength;
     // console.log('Lanes Network', lanesNetwork);
 
-    // Traffic Calming intersection with Network
+    // TRAFFIC CALMED STREETS
+    /* HASHED OUT
+    Filtering the traffic calmed streets by the administrative areas works. 
+    Problem:  What is an appropriate numerical aggregation for traffic calmed 
+              streets in one area? 
+              The total length is not meangingful here. The share of traffic calmed
+              streets compared to all streets in one area might be insightful. This 
+              would in turn require the additional download of this data from OSM.
+    */
     // let trafficCalming = dataBiType.features.filter(
     //   (feature: any) =>
     //     feature.properties.bike_infrastructure_type === 'traffic_calming' &&

@@ -18,6 +18,7 @@
 
 import 'react-responsive-carousel/lib/styles/carousel_edited.css'; // requires a loader
 import { Carousel } from 'react-responsive-carousel';
+import styled from 'styled-components';
 
 interface ISliderCarouselProps {
   contentParkingunits: JSX.Element;
@@ -25,6 +26,15 @@ interface ISliderCarouselProps {
   contentWeather: JSX.Element;
   contentTypes: JSX.Element;
 }
+
+const SliderPage = styled.div`
+  height: 100%;
+  padding: 0 rem;
+  margin: 0 rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
 
 const SliderCarousel = (props: ISliderCarouselProps) => {
   return (
@@ -36,7 +46,7 @@ const SliderCarousel = (props: ISliderCarouselProps) => {
       showThumbs={false}
       showIndicators={false}
     >
-      <div>{props.contentParkingunits}</div>
+      <SliderPage>{props.contentParkingunits}</SliderPage>
       <div>{props.contentCapacity}</div>
       <div>{props.contentWeather}</div>
       <div>{props.contentTypes}</div>

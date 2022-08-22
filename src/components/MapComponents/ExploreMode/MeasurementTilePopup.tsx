@@ -71,17 +71,17 @@ const MeasurementContainer = styled.div<TileStyleProps>`
   width: ${(props) => {
     switch (props.size) {
       case Size.big:
-        return '7rem';
+        return '7.5rem';
       case Size.normal:
-        return '5rem';
+        return '5.2rem';
     }
   }};
   height: ${(props) => {
     switch (props.size) {
       case Size.big:
-        return '7rem';
+        return '7.5rem';
       case Size.normal:
-        return '5rem';
+        return '5.2rem';
     }
   }};
   box-shadow: var(--scms-box-shadow);
@@ -97,47 +97,83 @@ const MeasurementContainer = styled.div<TileStyleProps>`
   }
 `;
 
-const TopText = styled.p`
+const TopText = styled.p<TileStyleProps>`
   font-weight: var(--scms-semi-bold);
-  position: absolute;
-  top: 3%;
-  hyphens: auto;
+  position: relative;
+  top: ${(props) => {
+    switch (props.size) {
+      case Size.big:
+        return '28%';
+      case Size.normal:
+        return '50%';
+    }
+  }};
 `;
 
-const Value = styled.p`
+const Value = styled.p<TileStyleProps>`
   font-weight: var(--scms-semi-bold);
-  position: absolute;
-  top: 30%;
-  line-height: 0.5;
+  position: relative;
+  top: ${(props) => {
+    switch (props.size) {
+      case Size.big:
+        return '-10%';
+      case Size.normal:
+        return '0%';
+    }
+  }};
+`;
+
+const UnitText = styled.p<TileStyleProps>`
+  font-weight: var(--scms-semi-bold);
+  position: relative;
+  top: ${(props) => {
+    switch (props.size) {
+      case Size.big:
+        return '-45%';
+      case Size.normal:
+        return '-28%';
+    }
+  }};
 `;
 
 const MeasurementTilePopup = (props: MeasurementTileProps) => {
   return (
     <MeasurementContainer status={props.status} size={props.size}>
-      <TopText className="is-size-7">{props.header}</TopText>
       {props.size === Size.normal && (
-        <Value className="is-size-4">
-          <Suspense fallback={<span>0</span>}>
-            <AnimatedNumber
-              value={Number(props.value)}
-              decimals={props.decimals != null ? props.decimals : 1}
-            />
-          </Suspense>
-          <wbr />
-          <span className="is-size-7">{props.unit}</span>
-        </Value>
+        <>
+          <TopText size={props.size} className="is-size-7">
+            {props.header}
+          </TopText>
+          <Value size={props.size} className="is-size-4">
+            <Suspense fallback={<span>0</span>}>
+              <AnimatedNumber
+                value={Number(props.value)}
+                decimals={props.decimals != null ? props.decimals : 1}
+              />
+            </Suspense>
+            <UnitText className="is-size-7" size={props.size}>
+              {props.unit}
+            </UnitText>
+          </Value>
+        </>
       )}
       {props.size === Size.big && (
-        <Value className="is-size-2">
-          <Suspense fallback={<span>0</span>}>
-            <AnimatedNumber
-              value={Number(props.value)}
-              decimals={props.decimals != null ? props.decimals : 1}
-            />
-          </Suspense>
-          <wbr />
-          <span className="is-size-7">{props.unit}</span>
-        </Value>
+        <>
+          <TopText size={props.size} className="is-size-6">
+            {props.header}
+          </TopText>
+          <Value className="is-size-2">
+            <Suspense fallback={<span>0</span>}>
+              <AnimatedNumber
+                value={Number(props.value)}
+                decimals={props.decimals != null ? props.decimals : 1}
+              />
+            </Suspense>
+          </Value>
+          <UnitText className="is-size-7" size={props.size}>
+            {props.unit}
+          </UnitText>
+        </>
       )}
     </MeasurementContainer>
   );

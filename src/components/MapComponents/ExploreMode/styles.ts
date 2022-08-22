@@ -36,7 +36,7 @@ export const HeadingWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 400;
+  line-height: 1.1;
 `;
 
 export const IconWrapper = styled.div`

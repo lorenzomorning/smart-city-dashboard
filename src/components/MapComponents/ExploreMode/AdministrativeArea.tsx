@@ -129,11 +129,6 @@ const AdministrativeAreas = () => {
                         <SliderCarousel
                           contentParkingunits={
                             <>
-                              <ChartHeadingWrapper>
-                                <span className="is-size-6">
-                                  {'Parkeinheiten'}
-                                </span>
-                              </ChartHeadingWrapper>
                               <TilesWrapper>
                                 <Suspense
                                   fallback={
@@ -141,11 +136,13 @@ const AdministrativeAreas = () => {
                                   }
                                 >
                                   <MeasurementTilePopup
+                                    header={'Summe'}
                                     size={Size.big}
                                     value={
                                       feature.properties.parking.freqObjects
                                     }
                                     decimals={0}
+                                    unit={'Parkeinheiten'}
                                   ></MeasurementTilePopup>
                                 </Suspense>
                               </TilesWrapper>
@@ -162,7 +159,10 @@ const AdministrativeAreas = () => {
                                 <p className="green">
                                   Parkeinheiten mit bekannter <br /> Kapazität
                                 </p>
-                                <p className="blue">Summe an Radplätzen</p>
+                                <p className="blue">
+                                  Bekannte Gesamt-
+                                  <br /> Kapazität
+                                </p>
                                 <p className="red">
                                   Parkeinheiten <br /> mit unbekannter Kapazität
                                 </p>
@@ -274,13 +274,24 @@ const AdministrativeAreas = () => {
                         ></SliderCarousel>
                       }
                       contentCycling={
-                        <progress
-                          className="progress is-large"
-                          value="80"
-                          max="100"
-                        >
-                          80%
-                        </progress>
+                        <>
+                          <TilesWrapper>
+                            <Suspense
+                              fallback={<Skeleton width="100%" height="100%" />}
+                            >
+                              <MeasurementTilePopup
+                                header={'Gesamtlänge'}
+                                size={Size.big}
+                                value={
+                                  feature.properties.cycling.cyclingstreets
+                                    .lengthKM
+                                }
+                                decimals={2}
+                                unit={'Kilometer'}
+                              ></MeasurementTilePopup>
+                            </Suspense>
+                          </TilesWrapper>
+                        </>
                       }
                       contentService={
                         <TilesWrapper>
@@ -292,6 +303,7 @@ const AdministrativeAreas = () => {
                               header="Innerhalb"
                               value={feature.properties.service.shopsWithin}
                               decimals={0}
+                              unit={'Läden'}
                             ></MeasurementTilePopup>
                           </Suspense>
                           <Suspense
@@ -302,6 +314,7 @@ const AdministrativeAreas = () => {
                               header="In der Nähe"
                               value={feature.properties.service.shopsNearby}
                               decimals={0}
+                              unit={'Läden'}
                             ></MeasurementTilePopup>
                           </Suspense>
                           <Suspense

@@ -54,7 +54,12 @@ const PopupPages = (props: IPopupPagesProps) => {
             <IconWrapper>
               <ParkingIcon />
             </IconWrapper>
-            {<span className="is-size-4">{props.name}</span>}
+            <p className="is-size-4 has-text-weight-semibold">
+              Parken <br />
+              <span className="is-size-4 has-text-weight-normal">
+                in {props.name}
+              </span>
+            </p>
           </HeadingWrapper>
           <ContentWrapper>{props.contentParking}</ContentWrapper>
           <FooterWrapper>
@@ -67,7 +72,7 @@ const PopupPages = (props: IPopupPagesProps) => {
                 setShowParking(false);
               }}
             >
-              Radwege
+              Fahrradstraßen 2.0
             </FooterButton>
             <FooterButton
               onClick={() => {
@@ -86,7 +91,12 @@ const PopupPages = (props: IPopupPagesProps) => {
             <IconWrapper>
               <CyclingIcon />
             </IconWrapper>
-            {<p className="is-size-5">{'Radwege ' + props.name}</p>}
+            <p className="is-size-4 has-text-weight-semibold">
+              Fahrradstraßen 2.0 <br />
+              <span className="is-size-4 has-text-weight-normal">
+                in {props.name}
+              </span>
+            </p>
           </HeadingWrapper>
           <ContentWrapper>{props.contentCycling}</ContentWrapper>
           <FooterWrapper>
@@ -99,7 +109,7 @@ const PopupPages = (props: IPopupPagesProps) => {
               Parken
             </FooterButton>
             <HighlightedFooterButton bold={showCycling}>
-              Radwege
+              Fahrradstraßen 2.0
             </HighlightedFooterButton>
             <FooterButton
               onClick={() => {
@@ -118,7 +128,14 @@ const PopupPages = (props: IPopupPagesProps) => {
             <IconWrapper>
               <ShopIcon />
             </IconWrapper>
-            {<p className="is-size-5">{'Läden ' + props.name}</p>}
+            {
+              <p className="is-size-4 has-text-weight-semibold">
+                Fahrradläden <br />
+                <span className="is-size-4 has-text-weight-normal">
+                  in {props.name}
+                </span>
+              </p>
+            }
           </HeadingWrapper>
           <ContentWrapper>{props.contentService}</ContentWrapper>
           <FooterWrapper>
@@ -136,7 +153,7 @@ const PopupPages = (props: IPopupPagesProps) => {
                 setShowService(false);
               }}
             >
-              Radwege
+              Fahrradstraßen 2.0
             </FooterButton>
             <HighlightedFooterButton bold={showService}>
               Service
