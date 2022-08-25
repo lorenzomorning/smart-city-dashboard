@@ -91,17 +91,6 @@ export const HighlightedFooterButton = styled(FooterButton)<{ bold?: boolean }>`
   }
 `;
 
-export const CapacitySliderWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  max-height: 25rem;
-  @media screen and (min-width: 788px) and (max-width: 1290px) {
-    max-height: 42rem;
-  }
-  padding: 0.5rem;
-`;
-
 export const ChartHeadingWrapper = styled.div`
   align-items: center;
   justify-content: center;

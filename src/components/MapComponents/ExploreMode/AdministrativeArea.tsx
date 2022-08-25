@@ -25,14 +25,9 @@ import flip from '@turf/flip';
 import styled from 'styled-components';
 
 import { TilesWrapper } from '../../styles';
-import {
-  ChartHeadingWrapper,
-  CapacitySliderWrapper,
-  CapacityLegend,
-} from './styles';
+import { ChartHeadingWrapper, CapacityLegend } from './styles';
 import { Size } from './MeasurementTilePopup';
 import MeasurementTilePopup from './MeasurementTilePopup';
-
 import PopupPages from './PopupPages';
 import DonutChart from './DonutChart';
 import SliderCarousel from './SlideCarousel';
@@ -152,7 +147,7 @@ const AdministrativeAreas = () => {
                             <>
                               <ChartHeadingWrapper>
                                 <span className="is-size-6">
-                                  {'Bekannte Kapazitäten'}
+                                  {'Stellplätze'}
                                 </span>
                               </ChartHeadingWrapper>
                               <CapacityLegend>
@@ -160,35 +155,31 @@ const AdministrativeAreas = () => {
                                   Parkeinheiten mit bekannter <br /> Kapazität
                                 </p>
                                 <p className="blue">
-                                  Bekannte Gesamt-
-                                  <br /> Kapazität
+                                  Bekannte Summe an
+                                  <br /> Stellplätzen
                                 </p>
                                 <p className="red">
                                   Parkeinheiten <br /> mit unbekannter Kapazität
                                 </p>
                               </CapacityLegend>
-                              <CapacitySliderWrapper>
-                                <CapacitySlider
-                                  freqKnown={
-                                    feature.properties.parking.capacity
-                                      .freqKnown
-                                  }
-                                  freqUnknown={
-                                    feature.properties.parking.capacity
-                                      .freqUnknown
-                                  }
-                                  max={
-                                    feature.properties.parking.capacity
-                                      .freqKnown +
-                                    feature.properties.parking.capacity
-                                      .freqUnknown
-                                  }
-                                  sumStands={
-                                    feature.properties.parking.capacity
-                                      .sumStands
-                                  }
-                                ></CapacitySlider>
-                              </CapacitySliderWrapper>
+                              <CapacitySlider
+                                freqKnown={
+                                  feature.properties.parking.capacity.freqKnown
+                                }
+                                freqUnknown={
+                                  feature.properties.parking.capacity
+                                    .freqUnknown
+                                }
+                                max={
+                                  feature.properties.parking.capacity
+                                    .freqKnown +
+                                  feature.properties.parking.capacity
+                                    .freqUnknown
+                                }
+                                sumStands={
+                                  feature.properties.parking.capacity.sumStands
+                                }
+                              ></CapacitySlider>
                             </>
                           }
                           contentWeather={
