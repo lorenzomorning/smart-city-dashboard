@@ -13,8 +13,24 @@ by the Free Software Foundation, either version 3 of the License, or
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU Affero General Public License for more details.
 
 You should have received a copy of the GNU Affero General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>.
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+# Modifications in this forked version
+
+This forked version extends the original Smart City Dashboard by integrating cycling infrastructure data from OpenStreetMap. This integration covers the daily automated data collection via Overpass Turbo and a following data categorization, description with attributes and an aggregation of cycling data for administrative areas.
+
+Remaining improvements are:
+
+- More meaningful aggregation of cycling paths and services in the Stadtteil-Modus
+- Better connection of the popup graphics of administrative areas in the Stadtteil-Modus and the data visualization in the background (e.g hovering coverage of service in the popup should trigger a corresponding visulization in the back)
+- Data insights on the cycling infrastructure component at the home page
+
+Smaller style improvements:
+
+- Remaining translations to German
+- Layer Control with corresponding symbols
+- Animated icon on the cycling infrastructure component at the home page
