@@ -839,7 +839,7 @@ export function aggregateBiAdminArea(dataAa: any, dataBiType: any) {
 
   // Loop through the adminAreas
   const arrayLength = adminAreas.length;
-  console.log('AdminAreas', arrayLength);
+  // console.log('AdminAreas', arrayLength);
   for (var i = 0; i < arrayLength; i++) {
     let singleAa = adminAreas[i];
 
@@ -1051,7 +1051,7 @@ export function aggregateBiAdminArea(dataAa: any, dataBiType: any) {
     let networkBuffer = buffer(networkWithin, 20, { units: 'meters' });
 
     let networkUnion = unionMultipleFeatures(networkBuffer);
-    console.log('Network Union Within', networkUnion);
+    // console.log('Network Union Within', networkUnion);
 
     // CYCLING STREETS
     adminAreas[i].properties.cycling.cyclingstreets = {};
@@ -1064,7 +1064,7 @@ export function aggregateBiAdminArea(dataAa: any, dataBiType: any) {
       featureCollection(cyclingStreets),
       singleAa
     );
-    console.log('Cycling streets within', cyclingStreetsWithin);
+    // console.log('Cycling streets within', cyclingStreetsWithin);
 
     let cyclingStreetsLength =
       Math.round(geomlength(cyclingStreetsWithin) * 100) / 100;
@@ -1082,7 +1082,7 @@ export function aggregateBiAdminArea(dataAa: any, dataBiType: any) {
     adminAreas[
       i
     ].properties.cycling.network.lengthKMcyclingStreets = networkCyclingStreetsLength;
-    console.log('Cycling Streets Network', cyclingStreetsNetwork);
+    // console.log('Cycling Streets Network', cyclingStreetsNetwork);
 
     // SEPERATED LANES
     /* HASHED OUT
@@ -1187,7 +1187,7 @@ export function aggregateBiAdminArea(dataAa: any, dataBiType: any) {
 
     // Get shops coverage
     let shopsAa = featureCollection(shopsWithin.concat(shopsNearby));
-    console.log('Shops within and nearby', shopsAa);
+    // console.log('Shops within and nearby', shopsAa);
     // Get catchment area (700 meters) of combined shops within the adminstrative area
     if (shopsAa.features.length > 0) {
       let shopsAaBuffer = buffer(shopsAa, 700, { units: 'meters' });
@@ -1197,10 +1197,10 @@ export function aggregateBiAdminArea(dataAa: any, dataBiType: any) {
       shopsAaUnion.properties.bike_infrastructure_type = 'shop_buffer';
       shopsAaUnion.properties.admin_area = singleAa.properties.name;
       dataBiType.features.push(shopsAaUnion);
-      console.log('Shops union', shopsAaUnion);
+      // console.log('Shops union', shopsAaUnion);
       // calculate the intersection and its area in km2
       let shopsAaIntersection: any = intersect(singleAa, shopsAaUnion);
-      console.log('Shops buffer intersection', shopsAaIntersection);
+      // console.log('Shops buffer intersection', shopsAaIntersection);
       let serviceCoverage =
         Math.round((geoarea(shopsAaIntersection) / 1000000) * 1000) / 1000;
       adminAreas[i].properties.service.coverage = serviceCoverage;
@@ -1209,7 +1209,7 @@ export function aggregateBiAdminArea(dataAa: any, dataBiType: any) {
     }
 
     // Test logging
-    console.log(singleAa.properties.name, singleAa);
+    // console.log(singleAa.properties.name, singleAa);
 
     // Push admin_area to dataBiType
     adminAreas[i].properties.bike_infrastructure_type = 'admin_area';
