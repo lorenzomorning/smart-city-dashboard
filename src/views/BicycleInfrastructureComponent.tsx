@@ -16,15 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import React, { useEffect, useState, Suspense, lazy } from 'react';
-import Skeleton from 'react-loading-skeleton';
-import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 
-import { ComponentWrapper } from '../components/styles';
 import BaseWidgetComponent from '../components/BaseWidget';
 import logobi from './../resources/cycling-dashboard.png';
-import Bicycle from '../resources/animated/Bicycle';
 
 const Container = styled.div`
   display: flex;

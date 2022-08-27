@@ -29,7 +29,6 @@ import {
   addAttributes,
   addBikeInfrastructureType,
   aggregateBiAdminArea,
-  appendAdminAreatoBI,
   appendNWtoBI,
   duplicatePolygonsToPoints,
   duplicateTrafficCalming,

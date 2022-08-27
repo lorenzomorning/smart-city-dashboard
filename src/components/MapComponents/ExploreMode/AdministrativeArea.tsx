@@ -17,7 +17,7 @@
  */
 
 //import L from 'leaflet';
-import React, { lazy, Suspense, useState } from 'react';
+import React, { Suspense } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { useSelector, RootStateOrAny } from 'react-redux';
 import { FeatureGroup, Pane, Polygon, Popup, Tooltip } from 'react-leaflet';

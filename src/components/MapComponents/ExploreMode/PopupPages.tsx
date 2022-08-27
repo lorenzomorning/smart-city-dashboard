@@ -16,9 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import styled from 'styled-components';
+import React, { useState } from 'react';
 import {
   PopupWrapper,
   ContentWrapper,
@@ -28,7 +26,6 @@ import {
   FooterButton,
   HighlightedFooterButton,
 } from './styles';
-import ReactMarkdown from 'react-markdown';
 
 import { CyclingIcon, ShopIcon, ParkingIcon } from '../../Icons';
 
@@ -40,8 +37,6 @@ interface IPopupPagesProps {
 }
 
 const PopupPages = (props: IPopupPagesProps) => {
-  const dispatch = useDispatch();
-
   const [showParking, setShowParking] = useState(true);
   const [showCycling, setShowCycling] = useState(false);
   const [showService, setShowService] = useState(false);
