@@ -29,7 +29,9 @@ const OpenSenseMapComponent = lazy(
 const ParkhausComponent = lazy(() => import('../views/ParkhausComponent'));
 const PassantenComponent = lazy(() => import('../views/PassantenComponent'));
 const RadfahrerComponent = lazy(() => import('../views/RadfahrerComponent'));
-const LinkBoxComponent = lazy(() => import('../views/LinkBoxComponent'));
+const BicycleInfrastructureComponent = lazy(
+  () => import('../views/BicycleInfrastructureComponent')
+);
 
 const Container = styled.div`
   max-width: 1632px !important;
@@ -40,19 +42,26 @@ function Home() {
     <React.Fragment>
       <Container className="container">
         <div className="tile">
-          <div className="tile is-vertical">
+          <div className="tile">
             <div className="tile">
-              <div className="tile is-2 is-parent is-horizontal">
+              <div className="tile is-parent is-2">
                 <Suspense fallback={<Skeleton width="100%" height="100%" />}>
                   <LogoComponent></LogoComponent>
                 </Suspense>
               </div>
-              <div className="tile is-8 is-parent">
+
+              <div className="tile is-parent is-5">
                 <Suspense fallback={<Skeleton width="100%" height="100%" />}>
                   <RadfahrerComponent></RadfahrerComponent>
                 </Suspense>
               </div>
-              <div className="tile is-2 is-parent">
+
+              <div className="tile is-parent is-3">
+                <Suspense fallback={<Skeleton width="100%" height="100%" />}>
+                  <BicycleInfrastructureComponent></BicycleInfrastructureComponent>
+                </Suspense>
+              </div>
+              <div className="tile is-parent is-2">
                 <Suspense fallback={<Skeleton width="100%" height="100%" />}>
                   <DateTimeComponent></DateTimeComponent>
                 </Suspense>
@@ -61,20 +70,18 @@ function Home() {
           </div>
         </div>
         <div className="tile">
-          <div className="tile is-vertical is-4">
+          <div className="tile is-4">
             <div className="tile is-parent">
               <Suspense fallback={<Skeleton width="100%" height="100%" />}>
                 <ParkhausComponent></ParkhausComponent>
               </Suspense>
             </div>
           </div>
-          <div className="tile is-vertical is-3">
-            <div className="tile">
-              <div className="tile is-parent">
-                <Suspense fallback={<Skeleton width="100%" height="100%" />}>
-                  <PassantenComponent></PassantenComponent>
-                </Suspense>
-              </div>
+          <div className="tile is-3">
+            <div className="tile is-parent">
+              <Suspense fallback={<Skeleton width="100%" height="100%" />}>
+                <PassantenComponent></PassantenComponent>
+              </Suspense>
             </div>
           </div>
 
@@ -84,23 +91,10 @@ function Home() {
                 <OpenSenseMapComponent></OpenSenseMapComponent>
               </Suspense>
             </div>
-            <div className="tile">
-              <div className="tile is-parent">
-                <Suspense fallback={<Skeleton width="100%" height="100%" />}>
-                  <AaseeComponent></AaseeComponent>
-                </Suspense>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="tile">
-          <div className="tile is-vertical">
-            <div className="tile">
-              <div className="tile is-4 is-parent is-horizontal">
-                <Suspense fallback={<Skeleton width="100%" height="100%" />}>
-                  <LinkBoxComponent></LinkBoxComponent>
-                </Suspense>
-              </div>
+            <div className="tile is-parent">
+              <Suspense fallback={<Skeleton width="100%" height="100%" />}>
+                <AaseeComponent></AaseeComponent>
+              </Suspense>
             </div>
           </div>
         </div>
