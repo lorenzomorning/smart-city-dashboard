@@ -57,7 +57,7 @@ export function* fetchBicycleInfrastructureData(): any {
     // const dataBi = yield responseBi.json();
     console.log('Bicycle Infrastructure Data', dataBi);
     let dataBiType = addBikeInfrastructureType(dataBi);
-    // check of any nd appear in the FeatureCollection
+    // check if any nd appear in the FeatureCollection
     const nd = dataBiType.features.filter(
       (feature: any) => feature.properties.bike_infrastructure_type === 'nd'
     );

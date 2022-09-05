@@ -46,7 +46,7 @@ const CapacityWrapper = styled.div`
   position: relative;
   width: 100%;
   height: 2rem;
-  margin: 0rem 1.25rem;
+  margin: 1rem 2rem;
   padding: 0rem;
   display: flex;
   align-items: center;

@@ -21,6 +21,7 @@ import styled from 'styled-components';
 export const PopupWrapper = styled.div`
   margin: 0rem;
   padding: 0rem;
+  border: 0rem;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;

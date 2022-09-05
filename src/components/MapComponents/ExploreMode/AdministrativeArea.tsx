@@ -37,6 +37,7 @@ const StyledPopup = styled(Popup)`
   min-width: 350px;
   padding: 0rem;
   margin: 0rem;
+  border: 0rem;
 `;
 
 const AdministrativeAreas = () => {

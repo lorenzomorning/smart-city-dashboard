@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import 'react-responsive-carousel/lib/styles/carousel_edited.css'; // requires a loader
+import './carousel_edited.css'; // requires a loader
 import { Carousel } from 'react-responsive-carousel';
 import styled from 'styled-components';
 
@@ -29,8 +29,9 @@ interface ISliderCarouselProps {
 
 const SliderPage = styled.div`
   height: 100%;
-  padding: 0 rem;
-  margin: 0 rem;
+  padding: 0rem;
+  margin: 0rem;
+  border: 0rem;
   display: flex;
   align-items: center;
   justify-content: center;
