@@ -19,6 +19,7 @@
 //import L from 'leaflet';
 import React, { Suspense } from 'react';
 import Skeleton from 'react-loading-skeleton';
+import ReactTooltip from 'react-tooltip';
 import { useSelector, RootStateOrAny } from 'react-redux';
 import { FeatureGroup, Pane, Polygon, Popup, Tooltip } from 'react-leaflet';
 import flip from '@turf/flip';
@@ -307,6 +308,7 @@ const AdministrativeAreas = () => {
                               value={feature.properties.service.shopsNearby}
                               decimals={0}
                               unit={'Läden'}
+                              hover="Anzahl an Fahrradläden, welche in anderen Stadtteilen in einer maximalen Entfernung von 700 m liegen"
                             ></MeasurementTilePopup>
                           </Suspense>
                           <Suspense
@@ -317,7 +319,8 @@ const AdministrativeAreas = () => {
                               header="Abdeckung"
                               value={feature.properties.service.coverage}
                               decimals={2}
-                              unit="km2"
+                              unit="%"
+                              hover="Anteil der Stadtteilfläche, in welcher mindestens ein Fahrradladen innerhalb von 700 m Umkreis liegt"
                             ></MeasurementTilePopup>
                           </Suspense>
                         </TilesWrapper>

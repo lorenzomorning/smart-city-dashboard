@@ -78,7 +78,6 @@ function Map() {
         center={[viewport.latitude, viewport.longitude]}
         zoom={viewport.zoom}
         maxBounds={bbox}
-        maxBoundsViscosity={1.0}
         minZoom={12}
         scrollWheelZoom={true}
         style={{ width: '100%', height: '100%' }}

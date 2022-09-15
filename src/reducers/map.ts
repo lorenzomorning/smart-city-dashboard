@@ -40,8 +40,8 @@ const initialState: MapState = {
     maxZoom: 17,
   },
   bbox: [
-    [51.857632, 7.486414],
-    [52.081687, 7.763585],
+    [51.8, 7.35],
+    [52.15, 7.85],
   ],
   features: {
     opensensemap: false,

@@ -299,7 +299,7 @@ export function addAttributes(dataBiType: any) {
         attributesFeature.push({ Kapazität: properties.capacity });
       }
       if (!properties.capacity) {
-        attributesFeature.push({ Kapazität: 'unknown' });
+        attributesFeature.push({ Kapazität: 'Unbekannt' });
       }
 
       // Parking type + weather protection + theft protection
@@ -337,20 +337,20 @@ export function addAttributes(dataBiType: any) {
           ['shed', 'lockers', 'building'].includes(properties.bicycle_parking)
         ) {
           if (!keys.includes('surveillance')) {
-            attributesFeature.push({ Diebstahlsicher: 'yes' });
+            attributesFeature.push({ Diebstahlsicher: 'Ja' });
           }
           if (!keys.includes('covered')) {
-            attributesFeature.push({ Wettergeschützt: 'yes' });
+            attributesFeature.push({ Wettergeschützt: 'Ja' });
           }
         }
         if (
           !['shed', 'lockers', 'building'].includes(properties.bicycle_parking)
         ) {
           if (!keys.includes('surveillance')) {
-            attributesFeature.push({ Diebstahlsicher: 'unknown' });
+            attributesFeature.push({ Diebstahlsicher: 'Unbekannt' });
           }
           if (!keys.includes('covered')) {
-            attributesFeature.push({ Wettergeschützt: 'unknown' });
+            attributesFeature.push({ Wettergeschützt: 'Unbekannt' });
           }
         }
       }
@@ -359,25 +359,49 @@ export function addAttributes(dataBiType: any) {
       }
       // Theft protection
       if (properties.surveillance) {
-        attributesFeature.push({ Diebstahlsicher: properties.surveillance });
+        if (properties.surveillance === 'yes') {
+          attributesFeature.push({ Diebstahlsicher: 'Ja' });
+        } else if (properties.surveillance === 'no') {
+          attributesFeature.push({ Diebstahlsicher: 'Nein' });
+        } else {
+          attributesFeature.push({ Diebstahlsicher: properties.surveillance });
+        }
       }
       if (!properties.surveillance && !properties.bicycle_parking) {
-        attributesFeature.push({ Diebstahlsicher: 'unknown' });
+        attributesFeature.push({ Diebstahlsicher: 'Unbekannt' });
       }
       // Weather protection
       if (properties.covered) {
-        attributesFeature.push({ Wettergeschützt: properties.covered });
+        if (properties.covered === 'yes') {
+          attributesFeature.push({ Wettergeschützt: 'Ja' });
+        } else if (properties.covered === 'no') {
+          attributesFeature.push({ Wettergeschützt: 'Nein' });
+        } else {
+          attributesFeature.push({ Wettergeschützt: properties.covered });
+        }
       }
       if (!properties.covered && !properties.bicycle_parking) {
-        attributesFeature.push({ Wettergeschützt: 'unknown' });
+        attributesFeature.push({ Wettergeschützt: 'Unbekannt' });
       }
       // Access
       if (properties.access) {
-        attributesFeature.push({ Zugang: properties.access });
+        if (properties.access === 'yes') {
+          attributesFeature.push({ Zugang: 'Ja' });
+        } else if (properties.access === 'no') {
+          attributesFeature.push({ Zugang: 'Nein' });
+        } else {
+          attributesFeature.push({ Zugang: properties.access });
+        }
       }
       // Fee
       if (properties.fee) {
-        attributesFeature.push({ Gebühren: properties.fee });
+        if (properties.fee === 'yes') {
+          attributesFeature.push({ Gebühren: 'Ja' });
+        } else if (properties.fee === 'no') {
+          attributesFeature.push({ Gebühren: 'Nein' });
+        } else {
+          attributesFeature.push({ Gebühren: properties.fee });
+        }
       }
       // Add any provided service
       const service = (subkey: any) => subkey.includes('service');
@@ -877,7 +901,7 @@ export function aggregateBiAdminArea(dataAa: any, dataBiType: any) {
         isNaN(parkingPoint.properties.attributes[indexCapacity]['Kapazität'])
       ) {
         parkingPoint.properties.attributes[indexCapacity]['Kapazität'] =
-          'unknown';
+          'Unbekannt';
       } else {
         sumStands +=
           parkingPoint.properties.attributes[indexCapacity]['Kapazität'];
@@ -908,7 +932,8 @@ export function aggregateBiAdminArea(dataAa: any, dataBiType: any) {
         containsCapacity
       );
       return (
-        feature.properties.attributes[indexCapacity]['Kapazität'] === 'unknown'
+        feature.properties.attributes[indexCapacity]['Kapazität'] ===
+        'Unbekannt'
       );
     }).length;
     adminAreas[i].properties.parking.capacity.freqUnknown = freqUnknownCapacity;
@@ -950,7 +975,7 @@ export function aggregateBiAdminArea(dataAa: any, dataBiType: any) {
       );
       return (
         feature.properties.attributes[indexWeather]['Wettergeschützt'] ===
-        'unknown'
+        'Unbekannt'
       );
     }).length;
     adminAreas[i].properties.parking.weather.Unbekannt = freqUnknownWeather;
@@ -963,7 +988,7 @@ export function aggregateBiAdminArea(dataAa: any, dataBiType: any) {
         containsWeather
       );
       return (
-        feature.properties.attributes[indexWeather]['Wettergeschützt'] === 'yes'
+        feature.properties.attributes[indexWeather]['Wettergeschützt'] === 'Ja'
       );
     }).length;
     adminAreas[i].properties.parking.weather.Ja = freqYesWeather;
@@ -976,7 +1001,8 @@ export function aggregateBiAdminArea(dataAa: any, dataBiType: any) {
         containsWeather
       );
       return (
-        feature.properties.attributes[indexWeather]['Wettergeschützt'] === 'no'
+        feature.properties.attributes[indexWeather]['Wettergeschützt'] ===
+        'Nein'
       );
     }).length;
     adminAreas[i].properties.parking.weather.Nein = freqNoWeather;
@@ -992,7 +1018,7 @@ export function aggregateBiAdminArea(dataAa: any, dataBiType: any) {
     //   let indexTheft = feature.properties.attributes.findIndex(containsTheft);
     //   return (
     //     feature.properties.attributes[indexTheft]['Diebstahlsicher'] ===
-    //     'unknown'
+    //     'Unbekannt'
     //   );
     // }).length;
     // adminAreas[i].properties.parking.theft.Unbekannt = freqUnknownTheft;
@@ -1003,7 +1029,7 @@ export function aggregateBiAdminArea(dataAa: any, dataBiType: any) {
     //     Object.keys(attributePair).includes('Diebstahlsicher');
     //   let indexTheft = feature.properties.attributes.findIndex(containsTheft);
     //   return (
-    //     feature.properties.attributes[indexTheft]['Diebstahlsicher'] === 'yes'
+    //     feature.properties.attributes[indexTheft]['Diebstahlsicher'] === 'Ja'
     //   );
     // }).length;
     // adminAreas[i].properties.parking.theft.Ja = freqYesTheft;
@@ -1014,7 +1040,7 @@ export function aggregateBiAdminArea(dataAa: any, dataBiType: any) {
     //     Object.keys(attributePair).includes('Diebstahlsicher');
     //   let indexTheft = feature.properties.attributes.findIndex(containsTheft);
     //   return (
-    //     feature.properties.attributes[indexTheft]['Diebstahlsicher'] === 'no'
+    //     feature.properties.attributes[indexTheft]['Diebstahlsicher'] === 'Nein'
     //   );
     // }).length;
     // adminAreas[i].properties.parking.theft.Nein = freqNoTheft;
@@ -1185,7 +1211,7 @@ export function aggregateBiAdminArea(dataAa: any, dataBiType: any) {
     );
     adminAreas[i].properties.service.shopsNearby = shopsNearby.length;
 
-    // Get shops coverage
+    // Get shops collection
     let shopsAa = featureCollection(shopsWithin.concat(shopsNearby));
     // console.log('Shops within and nearby', shopsAa);
     // Get catchment area (700 meters) of combined shops within the adminstrative area
@@ -1198,13 +1224,21 @@ export function aggregateBiAdminArea(dataAa: any, dataBiType: any) {
       shopsAaUnion.properties.admin_area = singleAa.properties.name;
       dataBiType.features.push(shopsAaUnion);
       // console.log('Shops union', shopsAaUnion);
-      // calculate the intersection and its area in km2
+      // Calculate the intersection of buffer with the singleAa
       let shopsAaIntersection: any = intersect(singleAa, shopsAaUnion);
       // console.log('Shops buffer intersection', shopsAaIntersection);
-      let serviceCoverage =
+      // Calculate its accessibility area in km2
+      let serviceAccessibility =
         Math.round((geoarea(shopsAaIntersection) / 1000000) * 1000) / 1000;
+      adminAreas[i].properties.service.accessibility = serviceAccessibility;
+      // Calculate its coverage in %
+      let serviceCoverage =
+        Math.round(
+          (geoarea(shopsAaIntersection) / geoarea(singleAa)) * 100000
+        ) / 1000;
       adminAreas[i].properties.service.coverage = serviceCoverage;
     } else if (shopsAa.features.length === 0) {
+      adminAreas[i].properties.service.accessibility = 0;
       adminAreas[i].properties.service.coverage = 0;
     }
 

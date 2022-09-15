@@ -17,6 +17,7 @@
  */
 
 import React, { lazy, Suspense } from 'react';
+import ReactTooltip from 'react-tooltip';
 import styled from 'styled-components';
 
 const AnimatedNumber = lazy(() => import('../../AnimatedNumber'));
@@ -40,6 +41,8 @@ interface MeasurementTileProps {
   status?: Status;
   unit?: string;
   decimals?: number;
+  hover?: string;
+  hoverID?: string;
 }
 
 interface TileStyleProps {
@@ -138,7 +141,21 @@ const UnitText = styled.p<TileStyleProps>`
 
 const MeasurementTilePopup = (props: MeasurementTileProps) => {
   return (
-    <MeasurementContainer status={props.status} size={props.size}>
+    <MeasurementContainer
+      status={props.status}
+      size={props.size}
+      data-tip={props.hover}
+    >
+      {props.hover && (
+        <ReactTooltip
+          effect="solid"
+          place="right"
+          // type="light"
+          // border={true}
+          // borderColor="#d8d8d8"
+          // arrowColor="#d8d8d8"
+        />
+      )}
       {props.size === Size.normal && (
         <>
           <TopText size={props.size} className="is-size-7">

@@ -50,6 +50,7 @@ export function* fetchBicycleInfrastructureData(): any {
     // Biycle Infrastructure Data from OSM
     console.log('start API-Request BI data...');
     const responseBi = yield call(fetch, ENDPOINT_BI);
+    console.log(responseBi);
     console.log('finish API-Request BI data');
     const osmdataBi = yield responseBi.json();
     const dataBi = osmtogeojson(osmdataBi);
@@ -74,6 +75,7 @@ export function* fetchBicycleInfrastructureData(): any {
     //  Network Data from OSM
     console.log('start API-Request NW data...');
     const responseNw = yield call(fetch, ENDPOINT_NW);
+    console.log(responseNw);
     console.log('finish API-Request NW data');
     const osmdataNw = yield responseNw.json();
     const dataNw = osmtogeojson(osmdataNw);
@@ -85,6 +87,7 @@ export function* fetchBicycleInfrastructureData(): any {
     // Administrative areas from OSM
     console.log('start API-Request AA data...');
     const responseAa = yield call(fetch, ENDPOINT_AA);
+    console.log(responseAa);
     console.log('finish API-Request AA data');
     const osmdataAa = yield responseAa.json();
     const dataAa = osmtogeojson(osmdataAa);
