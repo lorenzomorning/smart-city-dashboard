@@ -22,20 +22,7 @@ import {
   LOAD_BICYCLEINFRASTRUCTURE_DATA_FAILED,
   RENDER_BICYCLEINFRASTRUCTURE_DATA,
 } from '../actions/bicycleinfrastructure';
-import { ENDPOINT_BI } from './bicycleinfrastructureHelpers/overpassQueryBI';
-import { ENDPOINT_NW } from './bicycleinfrastructureHelpers/overpassQueryNW';
-import { ENDPOINT_AA } from './bicycleinfrastructureHelpers/overpassQueryAA';
-import {
-  addAttributes,
-  addBikeInfrastructureType,
-  aggregateBiAdminArea,
-  appendNWtoBI,
-  duplicatePolygonsToPoints,
-  duplicateTrafficCalming,
-  splitTrafficSignalLines,
-} from './bicycleinfrastructureHelpers/helperFunctions';
 
-const osmtogeojson = require('osmtogeojson');
 const INTERVAL = 60 * 60 * 24; // 1 day
 
 export function* fetchBicycleInfrastructureDataPeriodically() {
@@ -49,57 +36,10 @@ export function* fetchBicycleInfrastructureData(): any {
   try {
     // Biycle Infrastructure Data from OSM
     console.log('start API-Request BI data...');
-    const responseBi = yield call(fetch, ENDPOINT_BI);
-    console.log(responseBi);
-    console.log('finish API-Request BI data');
-    const osmdataBi = yield responseBi.json();
-    const dataBi = osmtogeojson(osmdataBi);
-    // const responseBi = yield call(fetch, '/dataBI.geojson');
-    // const dataBi = yield responseBi.json();
-    console.log('Bicycle Infrastructure Data', dataBi);
-    let dataBiType = addBikeInfrastructureType(dataBi);
-    // check if any nd appear in the FeatureCollection
-    const nd = dataBiType.features.filter(
-      (feature: any) => feature.properties.bike_infrastructure_type === 'nd'
-    );
-    console.log('NDs', nd);
-    // duplicate Polygons to Points
-    dataBiType = duplicatePolygonsToPoints(dataBiType);
-    // duplicate overwritten traffic calmed ways
-    dataBiType = duplicateTrafficCalming(dataBiType);
-    // split Traffic Signal LineStrings
-    dataBiType = splitTrafficSignalLines(dataBiType);
-    // add attributes for every Feature
-    dataBiType = addAttributes(dataBiType);
-
-    //  Network Data from OSM
-    console.log('start API-Request NW data...');
-    const responseNw = yield call(fetch, ENDPOINT_NW);
-    console.log(responseNw);
-    console.log('finish API-Request NW data');
-    const osmdataNw = yield responseNw.json();
-    const dataNw = osmtogeojson(osmdataNw);
-    // const responseNw = yield call(fetch, '/dataNW.geojson');
-    // const dataNw = yield responseNw.json();
-    console.log('Network Data', dataNw);
-    dataBiType = appendNWtoBI(dataNw, dataBiType);
-
-    // Administrative areas from OSM
-    console.log('start API-Request AA data...');
-    const responseAa = yield call(fetch, ENDPOINT_AA);
-    console.log(responseAa);
-    console.log('finish API-Request AA data');
-    const osmdataAa = yield responseAa.json();
-    const dataAa = osmtogeojson(osmdataAa);
-    // const responseAa = yield call(fetch, '/dataAA.geojson');
-    // const dataAa = yield responseAa.json();
-    console.log('Administrative Areas Data', dataAa);
-    console.log('Calculate parking, cycling, service data for admin areas...');
-    dataBiType = aggregateBiAdminArea(dataAa, dataBiType);
-    // dataBiType = appendAdminAreatoBI(dataAa, dataBiType);
-    console.log('Calculation completed!');
-
-    const data = dataBiType;
+    const endpoint = `${process.env.REACT_APP_BICYCLE_URL}`;
+    const response = yield call(fetch, endpoint);
+    const data = yield response.json();
+    console.log('finish API-Request BI data...');
     yield put({
       type: RENDER_BICYCLEINFRASTRUCTURE_DATA,
       bicycleinfrastructure: data,
