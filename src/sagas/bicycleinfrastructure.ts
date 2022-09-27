@@ -39,7 +39,7 @@ export function* fetchBicycleInfrastructureData(): any {
     const endpoint = `${process.env.REACT_APP_BICYCLE_URL}`;
     const response = yield call(fetch, endpoint);
     const data = yield response.json();
-    console.log('finish API-Request BI data...');
+    console.log('finished API-Request BI data...');
     yield put({
       type: RENDER_BICYCLEINFRASTRUCTURE_DATA,
       bicycleinfrastructure: data,
