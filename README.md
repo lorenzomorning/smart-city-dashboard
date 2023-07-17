@@ -6,7 +6,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 Copyright of the master repository (C) 2022 Reedu GmbH & Co. KG
 
-Copyright of this fork (C) 2023 Lorenz Beck
+Copyright of this fork (C) 2022 Lorenz Beck
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published
