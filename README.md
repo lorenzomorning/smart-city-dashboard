@@ -5,6 +5,7 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 Copyright of the master repository (C) 2022 Reedu GmbH & Co. KG
+
 Copyright of this fork (C) 2023 Lorenz Beck
 
 This program is free software: you can redistribute it and/or modify
