@@ -1,10 +1,11 @@
-# Smart City Münster Dashboard
+# Integration of Bicycle Infrastructure into the Smart City Münster Dashboard
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/a3b0b564-6d90-4bbf-9b5f-2f5fd46d5a97/deploy-status)](https://app.netlify.com/sites/smart-city-dashboard/deploys)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/a3b0b564-6d90-4bbf-9b5f-2f5fd46d5a97/deploy-status)](https://app.netlify.com/sites/urban-cycling-dashboard-muenster/deploys)
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-Copyright (C) 2022 Reedu GmbH & Co. KG
+Copyright of the master repository (C) 2022 Reedu GmbH & Co. KG
+Copyright of this fork (C) 2023 Lorenz Beck
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published
