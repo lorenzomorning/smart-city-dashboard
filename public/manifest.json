@@ -1,6 +1,6 @@
 {
-  "short_name": "Smart City Münster Dashboard",
-  "name": "Smart City Münster Dashboard",
+  "short_name": "Cycling Dashboard",
+  "name": "Cycling Dashboard",
   "icons": [
     {
       "src": "manifest-icon-192.png",
